@@ -14,6 +14,7 @@ const foodTexturesPaths = [
 
 const foodTextures = [];
 const flyingFoods = [];
+const maxFoodOnScreen = 10;  // Максимальна кількість їжі на екрані
 
 Promise.all(foodTexturesPaths.map(loadTexture)).then((textures) => {
     foodTextures.push(...textures);
@@ -34,6 +35,9 @@ function startGame() {
 
 // Spawns food item with random position and path
 function spawnFood() {
+
+    if (flyingFoods.length >= maxFoodOnScreen) return;
+
     const texture = foodTextures[Math.floor(Math.random() * foodTextures.length)];
     const sprite = new PIXI.Sprite(texture);
     sprite.scale.set(0.2 + Math.random() * 0.2);
@@ -84,21 +88,27 @@ function handleMouseClick(event) {
 
 // Updates food position along its path
 function update(delta) {
-    const speed = 0.002 * delta;
+    const speed = 0.006 * delta;
 
     for (let i = flyingFoods.length - 1; i >= 0; i--) {
         const food = flyingFoods[i];
         food.pathProgress += speed;
 
-        // If food reached the end of its path, remove it
-        if (food.pathProgress >= 1) {
-            app.stage.removeChild(food);
-            flyingFoods.splice(i, 1);
-            continue;
-        }
+        // // If food reached the end of its path (outside screen), remove it
+        // if (food.pathProgress >= 1) {
+        //     app.stage.removeChild(food);
+        //     flyingFoods.splice(i, 1);
+        //     continue;
+        // }
 
         const pos = getPointOnPath(food.path, food.pathProgress);
         food.position.set(pos.x, pos.y);
+
+        // Check if food has moved out of the screen (in any direction)
+        if (pos.x < -50 || pos.x > app.screen.width + 50 || pos.y < -50 || pos.y > app.screen.height + 50) {
+            app.stage.removeChild(food);
+            flyingFoods.splice(i, 1);
+        }
     }
 }
 
