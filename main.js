@@ -28,6 +28,7 @@ function loadTexture(path) {
 
 // Starts the game, sets interval and ticker
 function startGame() {
+    loadBackground();
     setInterval(spawnFood, 700);
     app.ticker.add(update);
     window.addEventListener("resize", () => app.renderer.resize(window.innerWidth, window.innerHeight));
@@ -85,7 +86,12 @@ function handleMouseClick(event) {
         }
     }
 }
-
+function loadBackground() {
+    const background = PIXI.Sprite.from('src/assets/background1.png'); // Replace with your background image path
+    background.width = app.screen.width; // Make the background cover the full width
+    background.height = app.screen.height; // Make the background cover the full height
+    app.stage.addChildAt(background, 0); // Add background at the bottom layer
+}
 // Updates food position along its path
 function update(delta) {
     const speed = 0.006 * delta;
