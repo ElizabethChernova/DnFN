@@ -10,14 +10,14 @@ document.body.appendChild(app.canvas);
 const texturesPaths = [
     'res/pizza.png',
     'res/sushi.png',
-    'res/burger.png',
-    'res/background1.png'
+    'res/burger.png'
 ];
 
 const foodTextures = [];
 const flyingFoods = [];
 const maxFoodOnScreen = 10;  // Максимальна кількість їжі на екрані
 
+await loadTexture('res/background1.png')
 Promise.all(texturesPaths.map(loadTexture)).then((textures) => {
     foodTextures.push(...textures);
     startGame();
