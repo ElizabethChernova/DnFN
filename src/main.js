@@ -72,7 +72,7 @@ function getRandomSpawnPosition() {
 }
 
 // Handles mouse click and removes food if clicked
-document.addEventListener('click', handleMouseClick);
+document.addEventListener('pointerdown', handleMouseClick);
 
 function handleMouseClick(event) {
     const mouseX = event.clientX;
