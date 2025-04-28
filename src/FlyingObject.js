@@ -3,21 +3,23 @@ export const FlyingObjectTypes = {
     //       and correct hit box definitions / score updates.
     pizza: {
         imagePath: 'res/pizza.png',
-        shape: 'rectangle',
         width: 512,
         height: 512,
+        shape: 'rectangle',
         scoreUpdate: 10
     },
     burger: {
         imagePath: 'res/burger.png',
+        width: 500,
+        height: 500,
         shape: 'circle',
-        radius: 500,
         scoreUpdate: 10
     },
     sushi: {
         imagePath: 'res/sushi.png',
+        width: 1200,
+        height: 1200,
         shape: 'circle',
-        radius: 1200,
         scoreUpdate: -5
     }
 }

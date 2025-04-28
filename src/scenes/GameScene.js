@@ -56,7 +56,7 @@ export class GameScene extends Scene {
     }
 
     onMousePointerDown(x, y) {
-        console.log("onMousePointerDown", x, y);
+        this.#game.shoot(x, y);
     }
 
     #updateFlyingObjectSprites() {
@@ -69,8 +69,8 @@ export class GameScene extends Scene {
             }
 
             // Update sprite position, rotation and scale
-            this.#flyingObjectSprites[flyingObject.uuid].x = flyingObject.x;
-            this.#flyingObjectSprites[flyingObject.uuid].y = flyingObject.y;
+            this.#flyingObjectSprites[flyingObject.uuid].x = flyingObject.x - flyingObject.typeDefinition.width / 2;
+            this.#flyingObjectSprites[flyingObject.uuid].y = flyingObject.y - flyingObject.typeDefinition.height / 2;
             this.#flyingObjectSprites[flyingObject.uuid].rotation = flyingObject.rotation;
             this.#flyingObjectSprites[flyingObject.uuid].scale = flyingObject.scale;
         }

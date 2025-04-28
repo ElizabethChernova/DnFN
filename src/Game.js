@@ -1,6 +1,6 @@
 import { PathInterpolationStrategy } from "./motion/PathInterpol.js";
 import { FlyingObject, FlyingObjectTypes } from "./FlyingObject.js";
-import { lerp } from "./Util.js"
+import { lerp, pointDistance } from "./Util.js"
 
 export const GameMode = Object.freeze({
     PATH_INTERPOLATION: Symbol("pathInterpolation"),
@@ -19,6 +19,9 @@ export class Game {
     #timeSinceLastSpawnOpportunity = 0;
     #targetFlyingObjectCount = 10;
     #maxFlyingObjectCount = 15;
+
+    #remainingTime = 60; // [s] // TODO: actually limit time
+    #score = 0;
 
     isPaused = false;
 
@@ -92,10 +95,49 @@ export class Game {
     }
 
     shoot(x, y) {
-        // TODO
+        // TODO: fix ordering issue (click should hit topmost object)
+        for (const flyingObject of this.#flyingObjects) {
+            let hit = false;
+            switch (flyingObject.typeDefinition.shape) {
+                case "circle":
+                    hit = this.#isCircularObjectHit(flyingObject, x, y);
+                    break;
+                case "rectangle":
+                    hit = this.#isRectangularObjectHit(flyingObject, x, y);
+                    break;
+            }
+
+            if (hit) {
+                this.#processHit(flyingObject);
+                return;
+            }
+        }
     }
 
     get flyingObjects() {
         return this.#flyingObjects;
+    }
+
+    // TODO: handle rotation and scale
+    #isCircularObjectHit(flyingObject, hit_x, hit_y) {
+        const distance = pointDistance(hit_x, hit_y, flyingObject.x, flyingObject.y);
+        return distance <= flyingObject.typeDefinition.width / 2;
+    }
+
+    // TODO: handle rotation and scale
+    #isRectangularObjectHit(flyingObject, hit_x, hit_y) {
+        const left = flyingObject.x - flyingObject.typeDefinition.width / 2;
+        const right = flyingObject.x + flyingObject.typeDefinition.width / 2;
+        const top = flyingObject.y - flyingObject.typeDefinition.height / 2;
+        const bottom = flyingObject.y + flyingObject.typeDefinition.height / 2;
+
+        return hit_x >= left && hit_x <= right && hit_y >= top && hit_y <= bottom;
+    }
+
+    #processHit(flyingObject) {
+        this.#score += flyingObject.typeDefinition.scoreUpdate;
+        const objectIndex = this.#flyingObjects.indexOf(flyingObject);
+        this.#flyingObjects.splice(objectIndex, 1);
+        console.log("Score:", this.#score);
     }
 }
