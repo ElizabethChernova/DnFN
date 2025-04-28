@@ -31,7 +31,7 @@ export class FlyingObject {
     rotation = 0; // in radians, rotation expressed counter-clockwise
     scale = 1;
 
-    simulationState = {} // can be used by path techniques to keep track of additional state information
+    motionState = {} // can be used by path techniques to keep track of additional state information
 
     constructor(typeDefinition) {
         this.typeDefinition = typeDefinition;

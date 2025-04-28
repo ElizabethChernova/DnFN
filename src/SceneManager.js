@@ -56,10 +56,12 @@ export class SceneManager {
 
         if (this.#currentScene) {
             this.#app.stage.removeChild(this.#currentScene);
-            this.#currentScene.exitScene();
+            const oldScene = this.#currentScene
+            this.#currentScene = null;
+            oldScene.exitScene();
         }
+        this.#scenes[newSceneName].enterScene(options);
         this.#currentScene = this.#scenes[newSceneName];
-        this.#currentScene.enterScene(options);
         this.#app.stage.addChild(this.#currentScene);
         console.log(`Changed to scene "${newSceneName}"`)
     }
