@@ -1,6 +1,7 @@
 import { SceneManager } from "./SceneManager.js";
 import { MainMenuScene } from "./scenes/MainMenuScene.js";
 import { GameScene } from "./scenes/GameScene.js";
+import { FlyingObjectTypes } from "./FlyingObject.js";
 
 const app = new PIXI.Application();
 await app.init({
@@ -10,6 +11,12 @@ await app.init({
     autoStart: false
 });
 document.body.appendChild(app.canvas);
+
+// Preload all assets
+for (const flyingObjectType in FlyingObjectTypes) {
+    await PIXI.Assets.load(FlyingObjectTypes[flyingObjectType].imagePath);
+}
+await PIXI.Assets.load("res/background1.png");
 
 let sceneManager = new SceneManager(app);
 
@@ -21,4 +28,5 @@ let gameScene = new GameScene(sceneManager);
 await gameScene.init();
 sceneManager.registerScene("game", gameScene);
 
+// Start game in main menu
 sceneManager.changeScene("mainMenu");

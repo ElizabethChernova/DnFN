@@ -94,4 +94,8 @@ export class Game {
     shoot(x, y) {
         // TODO
     }
+
+    get flyingObjects() {
+        return this.#flyingObjects;
+    }
 }
