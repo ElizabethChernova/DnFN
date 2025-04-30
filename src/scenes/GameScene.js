@@ -4,6 +4,7 @@ import { Game, GameMode } from "../Game.js";
 export class GameScene extends Scene {
     #game = null;
     #backgroundSprite;
+    #scoreText;
     #flyingObjectSprites = {};
     #forceSourceSprites = [];
 
@@ -35,12 +36,26 @@ export class GameScene extends Scene {
         this.#readjustBackground(this.sceneManager.screenWidth, this.sceneManager.screenHeight);
         this.addChildAt(this.#backgroundSprite, 0);
 
+        // Setup score text
+        this.#scoreText = new PIXI.Text({
+            text: "Score: 0",
+            style: {
+                fontFamily: "Roboto Regular",
+                fontSize: 25,
+                fill: "#ffffff"
+            }
+        });
+        this.#scoreText.anchor.x = 1;
+        this.#readjustScore(this.sceneManager.screenWidth, this.sceneManager.screenHeight);
+        this.addChild(this.#scoreText);
+
         this.#createForceSourceSprites();
     }
 
     animationUpdate(deltaTime) {
         this.#game.animationUpdate(deltaTime);
         this.#updateFlyingObjectSprites();
+        this.#scoreText.text = "Score: " + this.#game.score;
     }
 
     exitScene() {}
@@ -48,6 +63,7 @@ export class GameScene extends Scene {
     onWindowResize(newWidth, newHeight) {
         this.#game.resizeScreen(newWidth, newHeight);
         this.#readjustBackground(newWidth, newHeight);
+        this.#readjustScore(newWidth, newHeight);
     }
 
     onKeyDown(key) {
@@ -76,6 +92,11 @@ export class GameScene extends Scene {
         sprite.scale = Math.max(horizontalScale, verticalScale);
         sprite.x = width / 2;
         sprite.y = height / 2;
+    }
+
+    #readjustScore(screenWidth, screenHeight) {
+        this.#scoreText.x = screenWidth - 10;
+        this.#scoreText.y = 10;
     }
 
     #updateFlyingObjectSprites() {

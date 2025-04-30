@@ -138,6 +138,10 @@ export class Game {
         return this.#forceSources;
     }
 
+    get score() {
+        return this.#score;
+    }
+
     // TODO: handle rotation and scale
     #isCircularObjectHit(flyingObject, hit_x, hit_y) {
         const distance = pointDistance(hit_x, hit_y, flyingObject.x, flyingObject.y);
@@ -156,8 +160,8 @@ export class Game {
 
     #processHit(flyingObject) {
         this.#score += flyingObject.typeDefinition.scoreUpdate;
+        this.#score = Math.max(this.#score, 0);
         const objectIndex = this.#flyingObjects.indexOf(flyingObject);
         this.#flyingObjects.splice(objectIndex, 1);
-        console.log("Score:", this.#score);
     }
 }
