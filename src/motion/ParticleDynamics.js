@@ -16,7 +16,7 @@ export class ParticleDynamicsStrategy extends MotionStrategy {
         flyingObject.scale = 1;
         flyingObject.motionState = {
             mass: 1,
-            velocity: [-500, 0],
+            velocity: [-500, (Math.random() - 0.5) * 200],
             force: [0, 0]
         };
     }
@@ -56,12 +56,12 @@ export class ParticleDynamicsStrategy extends MotionStrategy {
     }
 
     #generateRandomSpawnPosition() {
-        const side = Math.floor(Math.random() * 2);
+        const side = 0 //Math.floor(Math.random() * 2); // TODO: revert to random
         let x, y;
 
         switch (side) {
-            case 0: x = -50; y = Math.random() * this.screenHeight; break; // from left
-            case 1: x = this.screenWidth + 50; y = Math.random() * this.screenHeight; break; // from right
+            case 0: x = this.screenWidth + 50; y = Math.random() * this.screenHeight; break; // from right
+            case 1: x = -50; y = Math.random() * this.screenHeight; break; // from left
         }
 
         return {x, y};
