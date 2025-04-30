@@ -3,6 +3,7 @@ import { Game, GameMode } from "../Game.js";
 
 export class GameScene extends Scene {
     #game = null;
+    #backgroundSprite;
     #flyingObjectSprites = {};
     #forceSourceSprites = [];
 
@@ -25,10 +26,12 @@ export class GameScene extends Scene {
                 throw new Error("GameScene enterScene() was called without specifying a valid game mode");
         }
 
-        const background = PIXI.Sprite.from('res/background.png');
-        background.width = this.sceneManager.screenWidth;
-        background.height = this.sceneManager.screenHeight;
-        this.addChildAt(background, 0);
+        // Setup background
+        this.#backgroundSprite = PIXI.Sprite.from('res/background.png');
+        this.#backgroundSprite.anchor.x = 0.5;
+        this.#backgroundSprite.anchor.y = 0.5;
+        this.#readjustBackground(this.sceneManager.screenWidth, this.sceneManager.screenHeight);
+        this.addChildAt(this.#backgroundSprite, 0);
 
         this.#createForceSourceSprites();
     }
@@ -41,7 +44,8 @@ export class GameScene extends Scene {
     exitScene() {}
 
     onWindowResize(newWidth, newHeight) {
-        console.log("onWindowResize", newWidth, newHeight);
+        this.#game.resizeScreen(newWidth, newHeight);
+        this.#readjustBackground(newWidth, newHeight);
     }
 
     onKeyDown(key) {
@@ -60,6 +64,16 @@ export class GameScene extends Scene {
 
     onMousePointerDown(x, y) {
         this.#game.shoot(x, y);
+    }
+
+    #readjustBackground(width, height) {
+        const sprite = this.#backgroundSprite;
+        sprite.scale = 1;
+        const horizontalScale = width / sprite.width;
+        const verticalScale = height / sprite.height;
+        sprite.scale = Math.max(horizontalScale, verticalScale);
+        sprite.x = width / 2;
+        sprite.y = height / 2;
     }
 
     #updateFlyingObjectSprites() {
