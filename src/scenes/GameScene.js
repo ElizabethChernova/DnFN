@@ -15,19 +15,21 @@ export class GameScene extends Scene {
         switch (options.gameMode) {
             case "pathInterpolation":
                 this.#game = new Game(GameMode.PATH_INTERPOLATION, this.sceneManager.screenWidth, this.sceneManager.screenHeight);
+                this.#backgroundSprite = PIXI.Sprite.from('res/backgroundEden.png');
                 break;
             case "particleDynamics":
                 this.#game = new Game(GameMode.PARTICLE_DYNAMICS, this.sceneManager.screenWidth, this.sceneManager.screenHeight);
+                this.#backgroundSprite = PIXI.Sprite.from('res/backgroundSpace.png');
                 break;
             case "RigidBody":
                 this.#game = new Game(GameMode.RIGID_BODY, this.sceneManager.screenWidth, this.sceneManager.screenHeight);
+                this.#backgroundSprite = PIXI.Sprite.from('res/backgroundEden.png');
                 break;
             default:
                 throw new Error("GameScene enterScene() was called without specifying a valid game mode");
         }
 
         // Setup background
-        this.#backgroundSprite = PIXI.Sprite.from('res/background.png');
         this.#backgroundSprite.anchor.x = 0.5;
         this.#backgroundSprite.anchor.y = 0.5;
         this.#readjustBackground(this.sceneManager.screenWidth, this.sceneManager.screenHeight);
