@@ -16,7 +16,7 @@ document.body.appendChild(app.canvas);
 for (const flyingObjectType in FlyingObjectTypes) {
     await PIXI.Assets.load(FlyingObjectTypes[flyingObjectType].imagePath);
 }
-await PIXI.Assets.load("res/background1.png");
+await PIXI.Assets.load("res/background.png");
 
 let sceneManager = new SceneManager(app);
 

@@ -25,7 +25,7 @@ export class GameScene extends Scene {
                 throw new Error("GameScene enterScene() was called without specifying a valid game mode");
         }
 
-        const background = PIXI.Sprite.from('res/background1.png');
+        const background = PIXI.Sprite.from('res/background.png');
         background.width = this.sceneManager.screenWidth;
         background.height = this.sceneManager.screenHeight;
         this.addChildAt(background, 0);
@@ -72,10 +72,11 @@ export class GameScene extends Scene {
             }
 
             // Update sprite position, rotation and scale
-            this.#flyingObjectSprites[flyingObject.uuid].x = flyingObject.x - flyingObject.typeDefinition.width / 2;
-            this.#flyingObjectSprites[flyingObject.uuid].y = flyingObject.y - flyingObject.typeDefinition.height / 2;
-            this.#flyingObjectSprites[flyingObject.uuid].rotation = flyingObject.rotation;
-            this.#flyingObjectSprites[flyingObject.uuid].scale = flyingObject.scale;
+            const sprite = this.#flyingObjectSprites[flyingObject.uuid];
+            sprite.x = flyingObject.x - sprite.width / 2;
+            sprite.y = flyingObject.y - sprite.height / 2;
+            sprite.rotation = flyingObject.rotation;
+            sprite.scale = flyingObject.scale;
         }
 
         // Iterate over sprites and remove all whose counterpart in the Game class no longer exists

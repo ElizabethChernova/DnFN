@@ -1,26 +1,61 @@
 export const FlyingObjectTypes = {
     // TODO: The definitions below are just examples to demonstrate config. Replace with real food and non-food items
     //       and correct hit box definitions / score updates.
-    pizza: {
-        imagePath: 'res/pizza.png',
-        width: 512,
-        height: 512,
+    burger: {
+        imagePath: 'res/burger.png',
+        width: 137,
+        height: 146,
         shape: 'rectangle',
         scoreUpdate: 10
     },
-    burger: {
-        imagePath: 'res/burger.png',
-        width: 500,
-        height: 500,
+    toast: {
+        imagePath: 'res/toast.png',
+        width: 126,
+        height: 114,
+        shape: 'rectangle',
+        scoreUpdate: 5
+    },
+    pancake: {
+        imagePath: 'res/pancake.png',
+        width: 150,
+        height: 150,
+        shape: 'circle',
+        scoreUpdate: 5
+    },
+    pizza: {
+        imagePath: 'res/pizza.png',
+        width: 150,
+        height: 150,
         shape: 'circle',
         scoreUpdate: 10
     },
-    sushi: {
-        imagePath: 'res/sushi.png',
-        width: 1200,
-        height: 1200,
+    maki: {
+        imagePath: 'res/maki.png',
+        width: 150,
+        height: 150,
         shape: 'circle',
-        scoreUpdate: -5
+        scoreUpdate: 10
+    },
+    cat1: {
+        imagePath: 'res/cat1.png',
+        width: 150,
+        height: 150,
+        shape: 'circle',
+        scoreUpdate: -10
+    },
+    cat2: {
+        imagePath: 'res/cat2.png',
+        width: 150,
+        height: 150,
+        shape: 'circle',
+        scoreUpdate: -10
+    },
+    cat3: {
+        imagePath: 'res/cat3.png',
+        width: 150,
+        height: 150,
+        shape: 'circle',
+        scoreUpdate: -10
     }
 }
 
