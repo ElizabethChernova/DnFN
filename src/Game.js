@@ -100,7 +100,7 @@ export class Game {
     populateForceSources() {
         // TODO: replace with more meaningful initialization
         this.#forceSources.push(new GravitationalForce(500, 500, 5e5));
-        //this.#forceSources.push(new DragForce(1));
+        this.#forceSources.push(new DragForce(0.0015));
     }
 
     resizeScreen(newScreenWidth, newScreenHeight) {
