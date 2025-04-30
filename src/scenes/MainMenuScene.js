@@ -10,6 +10,6 @@ export class MainMenuScene extends Scene {
 
     animationUpdate(deltaTime) {
         // TODO: implement actual menu and update Game object with correct mode
-        this.sceneManager.changeScene("game", { gameMode: "pathInterpolation" });
+        this.sceneManager.changeScene("game", { gameMode: "particleDynamics" });
     }
 }
