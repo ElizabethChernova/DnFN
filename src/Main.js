@@ -1,5 +1,6 @@
 import { SceneManager } from "./SceneManager.js";
 import { MainMenuScene } from "./scenes/MainMenuScene.js";
+import { SettingsScene } from "./scenes/SettingsScene.js";
 import { GameScene } from "./scenes/GameScene.js";
 import { FlyingObjectTypes } from "./FlyingObject.js";
 
@@ -27,6 +28,9 @@ let sceneManager = new SceneManager(app);
 let mainMenuScene = new MainMenuScene(sceneManager);
 await mainMenuScene.init();
 sceneManager.registerScene("mainMenu", mainMenuScene);
+let settingsScene = new SettingsScene(sceneManager);
+await settingsScene.init();
+sceneManager.registerScene("settings", settingsScene);
 let gameScene = new GameScene(sceneManager);
 await gameScene.init();
 sceneManager.registerScene("game", gameScene);

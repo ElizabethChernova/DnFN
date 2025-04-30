@@ -1,15 +1,76 @@
 import { Scene } from "./Scene.js";
 
 export class MainMenuScene extends Scene {
+    #gameNameText;
+    #menuEntry1;
+    #menuEntry2;
+
     constructor(sceneManager) {
         super(sceneManager);
     }
 
     enterScene(options) {
+        this.#gameNameText = new PIXI.Text({
+            text: "DnFN",
+            style: {
+                fontFamily: "Roboto Bold",
+                fontSize: 85,
+                fill: "#db7e44"
+            }
+        });
+        this.#gameNameText.anchor.x = 0.5;
+        this.addChild(this.#gameNameText);
+
+        this.#menuEntry1 = new PIXI.Text({
+            text: "Press (1) for path interpolation mode",
+            style: {
+                fontFamily: "Roboto Regular",
+                fontSize: 30,
+                fill: "#ffffff"
+            }
+        });
+        this.#menuEntry1.anchor.x = 0.5;
+        this.addChild(this.#menuEntry1);
+
+        this.#menuEntry2 = new PIXI.Text({
+            text: "Press (2) for particle dynamics mode",
+            style: {
+                fontFamily: "Roboto Regular",
+                fontSize: 30,
+                fill: "#ffffff"
+            }
+        });
+        this.#menuEntry2.anchor.x = 0.5;
+        this.addChild(this.#menuEntry2);
+
+        this.#positionTextElements(this.sceneManager.screenWidth, this.sceneManager.screenHeight);
     }
 
     animationUpdate(deltaTime) {
-        // TODO: implement actual menu and update Game object with correct mode
-        this.sceneManager.changeScene("game", { gameMode: "particleDynamics" });
+    }
+
+    onKeyDown(key) {
+        console.log(key)
+        switch (key) {
+            case "Digit1":
+                this.sceneManager.changeScene("game", { gameMode: "pathInterpolation" });
+                break;
+            case "Digit2":
+                this.sceneManager.changeScene("game", { gameMode: "particleDynamics" });
+                break;
+        }
+    }
+
+    onWindowResize(newWidth, newHeight) {
+        this.#positionTextElements(newWidth, newHeight);
+    }
+
+    #positionTextElements(screenWidth, screenHeight) {
+        this.#gameNameText.x = screenWidth / 2;
+        this.#gameNameText.y = 300;
+        this.#menuEntry1.x = screenWidth / 2;
+        this.#menuEntry1.y = 450;
+        this.#menuEntry2.x = screenWidth / 2;
+        this.#menuEntry2.y = 500;
     }
 }

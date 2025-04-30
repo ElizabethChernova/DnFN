@@ -27,14 +27,10 @@ export class GameScene extends Scene {
                 this.#backgroundSprite = PIXI.Sprite.from('res/backgroundEden.png');
                 break;
             default:
-                throw new Error("GameScene enterScene() was called without specifying a valid game mode");
+                if (!this.#game) throw new Error("GameScene was entered without an existing game or specifying a valid game mode");
         }
 
-        // Setup background
-        this.#backgroundSprite.anchor.x = 0.5;
-        this.#backgroundSprite.anchor.y = 0.5;
-        this.#readjustBackground(this.sceneManager.screenWidth, this.sceneManager.screenHeight);
-        this.addChildAt(this.#backgroundSprite, 0);
+        this.#setupBackground();
 
         // Setup score text
         this.#scoreText = new PIXI.Text({
@@ -58,7 +54,15 @@ export class GameScene extends Scene {
         this.#scoreText.text = "Score: " + this.#game.score;
     }
 
-    exitScene() {}
+    exitScene() {
+        // Remove all children from scene
+        for (const child of this.removeChildren()) {
+            child.destroy({ children: true, texture: true, baseTexture: true });
+        }
+
+        this.#flyingObjectSprites = {};
+        this.#forceSourceSprites = [];
+    }
 
     onWindowResize(newWidth, newHeight) {
         this.#game.resizeScreen(newWidth, newHeight);
@@ -75,13 +79,32 @@ export class GameScene extends Scene {
                 console.log("Open settings"); // TODO
                 break;
             case "Escape":
-                this.sceneManager.changeScene("mainMenu");
+                this.sceneManager.changeScene("settings");
                 break;
         }
     }
 
     onMousePointerDown(x, y) {
         this.#game.shoot(x, y);
+    }
+
+    #setupBackground() {
+        switch (this.#game.gameMode) {
+            case GameMode.PATH_INTERPOLATION:
+                this.#backgroundSprite = PIXI.Sprite.from('res/backgroundEden.png');
+                break;
+            case GameMode.PARTICLE_DYNAMICS:
+                this.#backgroundSprite = PIXI.Sprite.from('res/backgroundSpace.png');
+                break;
+            case GameMode.RIGID_BODY:
+                this.#backgroundSprite = PIXI.Sprite.from('res/backgroundEden.png');
+                break;
+        }
+
+        this.#backgroundSprite.anchor.x = 0.5;
+        this.#backgroundSprite.anchor.y = 0.5;
+        this.#readjustBackground(this.sceneManager.screenWidth, this.sceneManager.screenHeight);
+        this.addChildAt(this.#backgroundSprite, 0);
     }
 
     #readjustBackground(width, height) {

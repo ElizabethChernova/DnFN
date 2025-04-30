@@ -130,6 +130,10 @@ export class Game {
         }
     }
 
+    get gameMode() {
+        return this.#gameMode;
+    }
+
     get flyingObjects() {
         return this.#flyingObjects;
     }
