@@ -19,6 +19,7 @@ for (const flyingObjectType in FlyingObjectTypes) {
 await PIXI.Assets.load("res/backgroundEden.png");
 await PIXI.Assets.load("res/backgroundSpace.png");
 await PIXI.Assets.load("res/Roboto-Regular.woff2");
+await PIXI.Assets.load("res/Roboto-Bold.woff2");
 
 let sceneManager = new SceneManager(app);
 
