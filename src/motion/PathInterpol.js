@@ -66,7 +66,6 @@ export class PathInterpolationStrategy extends MotionStrategy {
         const p1 = path[1];
         const p2 = path[2];
 
-        // Quadratic bezier
         const x = (1 - progress) * (1 - progress) * p0.x + 2 * (1 - progress) * progress * p1.x + progress * progress * p2.x;
         const y = (1 - progress) * (1 - progress) * p0.y + 2 * (1 - progress) * progress * p1.y + progress * progress * p2.y;
 
@@ -74,7 +73,6 @@ export class PathInterpolationStrategy extends MotionStrategy {
     }
 
     // Catmull-Rom interpolation between 4 points
-    // TODO: currently unused, remove?
     #catmullRom(p0, p1, p2, p3, t) {
         const t2 = t * t;
         const t3 = t2 * t;

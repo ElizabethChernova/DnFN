@@ -1,5 +1,9 @@
 import { PathInterpolationStrategy } from "./motion/PathInterpol.js";
+import { ParticleDynamicsStrategy } from "./motion/ParticleDynamics.js";
 import { FlyingObject, FlyingObjectTypes } from "./FlyingObject.js";
+import { ForceSource } from "./force/ForceSource.js";
+import { GravitationalForce } from "./force/GravitationalForce.js";
+import { DragForce } from "./force/DragForce.js";
 import { lerp, pointDistance } from "./Util.js"
 
 export const GameMode = Object.freeze({
@@ -12,8 +16,10 @@ export class Game {
     #gameMode;
     #screenWidth;
     #screenHeight;
-    #flyingObjects = [];
     #motionStrategy;
+
+    #flyingObjects = [];
+    #forceSources = [];
 
     #spawnOpportunityTimeStep = 250; // attempt to spawn new flying objects every 250ms
     #timeSinceLastSpawnOpportunity = 0;
@@ -34,6 +40,10 @@ export class Game {
         switch (gameMode) {
             case GameMode.PATH_INTERPOLATION:
                 this.#motionStrategy = new PathInterpolationStrategy(screenWidth, screenHeight);
+                break;
+            case GameMode.PARTICLE_DYNAMICS:
+                this.populateForceSources();
+                this.#motionStrategy = new ParticleDynamicsStrategy(screenWidth, screenHeight, this.#forceSources);
                 break;
             default:
                 throw new Error(`Game mode "${gameMode}" is not yet implemented`);
@@ -87,6 +97,12 @@ export class Game {
         return lerp(maxSpawnProbability, minSpawnProbability, t);
     }
 
+    populateForceSources() {
+        // TODO: replace with more meaningful initialization
+        this.#forceSources.push(new GravitationalForce(500, 500, 5e5));
+        //this.#forceSources.push(new DragForce(1));
+    }
+
     resizeScreen(newScreenWidth, newScreenHeight) {
         this.#screenWidth = newScreenWidth;
         this.#screenHeight = newScreenHeight;
@@ -116,6 +132,10 @@ export class Game {
 
     get flyingObjects() {
         return this.#flyingObjects;
+    }
+
+    get forceSources() {
+        return this.#forceSources;
     }
 
     // TODO: handle rotation and scale

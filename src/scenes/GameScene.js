@@ -4,6 +4,7 @@ import { Game, GameMode } from "../Game.js";
 export class GameScene extends Scene {
     #game = null;
     #flyingObjectSprites = {};
+    #forceSourceSprites = [];
 
     constructor(sceneManager) {
         super(sceneManager);
@@ -28,6 +29,8 @@ export class GameScene extends Scene {
         background.width = this.sceneManager.screenWidth;
         background.height = this.sceneManager.screenHeight;
         this.addChildAt(background, 0);
+
+        this.#createForceSourceSprites();
     }
 
     animationUpdate(deltaTime) {
@@ -80,6 +83,18 @@ export class GameScene extends Scene {
             if (!this.#game.flyingObjects.some(obj => obj.uuid === key)) {
                 this.removeChild(this.#flyingObjectSprites[key]);
                 delete this.#flyingObjectSprites[key];
+            }
+        }
+    }
+
+    #createForceSourceSprites() {
+        for (const forceSource of this.#game.forceSources) {
+            if (forceSource.imagePath) {
+                const sprite = PIXI.Sprite.from(forceSource.imagePath);
+                sprite.x = forceSource.x - sprite.width / 2;
+                sprite.y = forceSource.y - sprite.height / 2;
+                this.#forceSourceSprites.push(sprite);
+                this.addChild(sprite);
             }
         }
     }
