@@ -64,10 +64,10 @@ export class GameScene extends Scene {
         this.#forceSourceSprites = [];
     }
 
-    onWindowResize(newWidth, newHeight) {
-        this.#game.resizeScreen(newWidth, newHeight);
-        this.#readjustBackground(newWidth, newHeight);
-        this.#readjustScore(newWidth, newHeight);
+    onSceneResize(sceneWidth, sceneHeight) {
+        this.#game.resizeScreen(sceneWidth, sceneHeight);
+        this.#readjustBackground(sceneWidth, sceneHeight);
+        this.#readjustScore(sceneWidth, sceneHeight);
     }
 
     onKeyDown(key) {
@@ -76,10 +76,15 @@ export class GameScene extends Scene {
                 this.#game.isPaused = !this.#game.isPaused;
                 break;
             case "KeyS":
-                console.log("Open settings"); // TODO
+                if (this.sceneManager.isSidePanelVisible) {
+                    this.sceneManager.hideSidePanel();
+                } else {
+                    this.sceneManager.displaySidePanel("settingsSidePanel");
+                }
                 break;
             case "Escape":
-                this.sceneManager.changeScene("settings");
+                this.sceneManager.hideSidePanel();
+                this.sceneManager.changeScene("mainMenu");
                 break;
         }
     }
@@ -103,7 +108,7 @@ export class GameScene extends Scene {
 
         this.#backgroundSprite.anchor.x = 0.5;
         this.#backgroundSprite.anchor.y = 0.5;
-        this.#readjustBackground(this.sceneManager.screenWidth, this.sceneManager.screenHeight);
+        this.#readjustBackground(this.sceneManager.sceneWidth, this.sceneManager.sceneHeight);
         this.addChildAt(this.#backgroundSprite, 0);
     }
 
@@ -117,8 +122,8 @@ export class GameScene extends Scene {
         sprite.y = height / 2;
     }
 
-    #readjustScore(screenWidth, screenHeight) {
-        this.#scoreText.x = screenWidth - 10;
+    #readjustScore(width, height) {
+        this.#scoreText.x = width - 10;
         this.#scoreText.y = 10;
     }
 

@@ -14,7 +14,9 @@ export class Scene extends PIXI.Container {
 
     exitScene() {}
 
-    onWindowResize(newWidth, newHeight) {}
+    onWindowResize(screenWidth, screenHeight) {}
+
+    onSceneResize(sceneWidth, sceneHeight) {}
 
     onKeyDown(key) {}
 

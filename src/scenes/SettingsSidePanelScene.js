@@ -1,6 +1,6 @@
 import { Scene } from "./Scene.js";
 
-export class SettingsScene extends Scene {
+export class SettingsSidePanelScene extends Scene {
     #infoText;
 
     constructor(sceneManager) {
@@ -37,8 +37,8 @@ export class SettingsScene extends Scene {
         }
     }
 
-    onWindowResize(newWidth, newHeight) {
-        this.#positionTextElements(newWidth, newHeight);
+    onSceneResize(sceneWidth, sceneHeight) {
+        this.#positionTextElements(sceneWidth, sceneHeight);
     }
 
     #positionTextElements(screenWidth, screenHeight) {

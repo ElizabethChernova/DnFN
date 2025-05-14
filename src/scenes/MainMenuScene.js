@@ -50,7 +50,6 @@ export class MainMenuScene extends Scene {
     }
 
     onKeyDown(key) {
-        console.log(key)
         switch (key) {
             case "Digit1":
                 this.sceneManager.changeScene("game", { gameMode: "pathInterpolation" });
@@ -61,8 +60,8 @@ export class MainMenuScene extends Scene {
         }
     }
 
-    onWindowResize(newWidth, newHeight) {
-        this.#positionTextElements(newWidth, newHeight);
+    onSceneResize(sceneWidth, sceneHeight) {
+        this.#positionTextElements(sceneWidth, sceneHeight);
     }
 
     #positionTextElements(screenWidth, screenHeight) {
