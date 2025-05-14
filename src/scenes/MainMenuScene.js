@@ -46,6 +46,10 @@ export class MainMenuScene extends Scene {
         this.#positionTextElements(this.sceneManager.screenWidth, this.sceneManager.screenHeight);
     }
 
+    exitScene() {
+        this.removeChildren();
+    }
+
     animationUpdate(deltaTime) {
     }
 

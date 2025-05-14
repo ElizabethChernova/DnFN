@@ -77,6 +77,7 @@ export class SceneManager {
 
         this.hideSidePanel(); // just in case there already is a side panel
 
+        this.#scenes[sidePanelSceneName].position.x = this.screenWidth - this.#sidePanelWidth;
         this.#scenes[sidePanelSceneName].enterScene(options);
         this.#currentSidePanel = this.#scenes[sidePanelSceneName];
         this.#app.stage.addChild(this.#currentSidePanel);
@@ -119,7 +120,7 @@ export class SceneManager {
         }
 
         if (this.#currentSidePanel) {
-            this.updateContainerMask(this.#currentSidePanel, this.sceneWidth, 0, this.sidePanelWidth, this.screenHeight);
+            this.updateContainerMask(this.#currentSidePanel, 0, 0, this.sidePanelWidth, this.screenHeight);
         }
     }
 
@@ -127,6 +128,8 @@ export class SceneManager {
         const newWidth = window.innerWidth;
         const newHeight = window.innerHeight;
         this.#app.renderer.resize(newWidth, newHeight);
+        if (this.#currentSidePanel) this.#currentSidePanel.position.x = this.sceneWidth;
+        this.updateSceneAndSidePanelBounds();
         if (this.#currentScene) this.#currentScene.onWindowResize(newWidth, newHeight);
         this.onSceneResize();
     }
