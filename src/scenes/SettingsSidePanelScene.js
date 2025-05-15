@@ -1,16 +1,31 @@
 import { Scene } from "./Scene.js";
 
 export class SettingsSidePanelScene extends Scene {
-    #infoText;
+    #margin = 20;
+    #elementWidth = 400 - 2 * this.#margin;
+
+    #sliderHeight = 15;
+    #sliderBorderColor = "#FFFFFF";
+    #sliderBorder = 2;
+    #sliderBackgroundColor = "#FE6048";
+    #sliderFillColor = "#00B1DD";
+    #sliderCornerRadius = 20;
+    #sliderHandleBorder = 2;
+    #sliderHandleColor = "#A5E34D";
+    #sliderHandleRadius = 12;
+    #sliderFontColor = "#FFFFFF";
+    #sliderFontSize = 16;
 
     constructor(sceneManager) {
         super(sceneManager);
     }
 
     enterScene(options) {
-        const list = new PIXIUI.List({ type: 'vertical', elementsMargin: 10 });
+        const list = new PIXIUI.List({ type: 'vertical', elementsMargin: 15 });
+        list.position.x = this.#margin;
+        list.position.y = this.#margin;
 
-        // BUTTON
+        /*
         const buttonGraphic = new PIXI.Graphics()
             .roundRect(0, 0, 100, 50, 15).fill(0xFFFFFF)
 
@@ -18,72 +33,26 @@ export class SettingsSidePanelScene extends Scene {
 
         button.onPress.connect(() => console.log('onPress'));
         list.addChild(button.view);
+         */
 
-        // LABEL
-        this.#infoText = new PIXI.Text({
-            text: "Maximum FPS (0 = no limit)",
-            style: {
-                fontFamily: "Roboto Bold",
-                fontSize: 16,
-                fill: "#ffffff"
-            }
-        });
+        let infoText = this.#createLabel("Maximum FPS (0 = no limit)");
         //this.#infoText.anchor.x = 0.5;
-        list.addChild(this.#infoText);
+        list.addChild(infoText);
 
-        // SLIDER
-        let width = 400;
-        let height = 35;
-        let borderColor = "#FFFFFF";
-        let border = 3;
-        let backgroundColor = "#FE6048";
-        let fillColor = "#00B1DD";
-        let radius = 25;
-        let handleBorder = 3;
-        let meshColor = "#A5E34D";
-        let fontColor = "#FFFFFF";
-        let fontSize = 20;
-        let showValue = true;
+        let slider = this.#createSlider();
+        slider.value = 10;
+        slider.onUpdate.connect((value) => console.log(`${value}`));
+        list.addChild(slider);
 
-        const bg = new PIXI.Graphics()
-            .roundRect(0, 0, width, height, radius)
-            .fill(borderColor)
-            .roundRect(border, border, width - (border * 2), height - (border * 2), radius)
-            .fill(backgroundColor);
+        let infoText2 = this.#createLabel("Animation rate [Hz]");
+        //this.#infoText.anchor.x = 0.5;
+        list.addChild(infoText2);
 
-        const fill = new PIXI.Graphics()
-            .roundRect(0, 0, width, height, radius)
-            .fill(borderColor)
-            .roundRect(border, border, width - (border * 2), height - (border * 2), radius)
-            .fill(fillColor);
+        let slider2 = this.#createSlider();
+        slider2.value = 50;
+        slider2.onUpdate.connect((value) => console.log(`${value}`));
+        list.addChild(slider2);
 
-        const slider = new PIXI.Graphics()
-            .circle(0, 0, 20 + handleBorder)
-            .fill(borderColor)
-            .circle(0, 0, 20)
-            .fill(meshColor);
-
-        // Component usage
-        const singleSlider = new PIXIUI.Slider({
-            bg,
-            fill,
-            slider,
-            min: 0,
-            max: 240,
-            step: 1,
-            value: 50,
-            valueTextStyle: {
-                fill: fontColor,
-                fontSize,
-            },
-            showValue,
-        });
-
-        //singleSlider.value = value;
-
-        singleSlider.onUpdate.connect((value) => console.log(`${value}`));
-
-        list.addChild(singleSlider);
         this.addChild(list);
     }
 
@@ -107,5 +76,53 @@ export class SettingsSidePanelScene extends Scene {
     }
 
     onSceneResize(sceneWidth, sceneHeight) {
+    }
+
+    #createLabel(text) {
+        return new PIXI.Text({
+            text: text,
+            style: {
+                fontFamily: "Roboto Bold",
+                fontSize: 18,
+                fill: "#ffffff"
+            }
+        });
+    }
+
+    #createSlider() {
+        const bg = new PIXI.Graphics()
+            .roundRect(0, 0, this.#elementWidth, this.#sliderHeight, this.#sliderCornerRadius)
+            .fill(this.#sliderBorderColor)
+            .roundRect(this.#sliderBorder, this.#sliderBorder, this.#elementWidth - (this.#sliderBorder * 2), this.#sliderHeight - (this.#sliderBorder * 2), this.#sliderCornerRadius)
+            .fill(this.#sliderBackgroundColor);
+
+        const fill = new PIXI.Graphics()
+            .roundRect(0, 0, this.#elementWidth, this.#sliderHeight, this.#sliderCornerRadius)
+            .fill(this.#sliderBorderColor)
+            .roundRect(this.#sliderBorder, this.#sliderBorder, this.#elementWidth - (this.#sliderBorder * 2), this.#sliderHeight - (this.#sliderBorder * 2), this.#sliderCornerRadius)
+            .fill(this.#sliderFillColor);
+
+        const slider = new PIXI.Graphics()
+            .circle(0, 0, this.#sliderHandleRadius + this.#sliderHandleBorder)
+            .fill(this.#sliderBorderColor)
+            .circle(0, 0, this.#sliderHandleRadius)
+            .fill(this.#sliderHandleColor);
+
+        // Component usage
+        return new PIXIUI.Slider({
+            bg,
+            fill,
+            slider,
+            min: 0,
+            max: 240,
+            step: 1,
+            value: 50,
+            valueTextStyle: {
+                fill: this.#sliderFontColor,
+                fontSize: this.#sliderFontSize,
+                fontFamily: "Roboto Regular",
+            },
+            showValue: true,
+        });
     }
 }
