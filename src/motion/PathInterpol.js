@@ -36,12 +36,19 @@ export class PathInterpolationStrategy extends MotionStrategy {
                 flyingObject.y = -1000;
                 continue;
             }
-
+//here
+            const prevX = flyingObject.x;
+            const prevY = flyingObject.y;
             const position = this.#getPointOnPath(
                 flyingObject.motionState.path,
                 flyingObject.motionState.pathProgress);
             flyingObject.x = position.x;
             flyingObject.y = position.y;
+            //here
+              // Опціонально: обертання в напрямку руху
+            const dx = position.x - prevX;
+            const dy = position.y - prevY;
+            flyingObject.rotation = Math.atan2(dy, dx);
         }
     }
 
@@ -86,11 +93,13 @@ export class PathInterpolationStrategy extends MotionStrategy {
         const segmentProgress = progress * numSegments;
         const segmentIndex = Math.floor(segmentProgress);
         const t = segmentProgress - segmentIndex;
+//here
+const clampedIndex = Math.min(segmentIndex, path.length - 4);
 
-        const p0 = path[segmentIndex];
-        const p1 = path[segmentIndex + 1];
-        const p2 = path[segmentIndex + 2];
-        const p3 = path[segmentIndex + 3];
+        const p0 = path[clampedIndex];
+        const p1 = path[clampedIndex + 1];
+        const p2 = path[clampedIndex + 2];
+        const p3 = path[clampedIndex + 3];
 
         return this.#catmullRom(p0, p1, p2, p3, t);
     }

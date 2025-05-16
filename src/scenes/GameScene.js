@@ -52,9 +52,9 @@ export class GameScene extends Scene {
         this.#speedSlider = document.createElement("input");
         this.#speedSlider.type = "range";
         this.#speedSlider.min = "0.00001";
-        this.#speedSlider.max = "0.001";
-        this.#speedSlider.step = "0.0001";
-        this.#speedSlider.value = this.#game.motionStrategy?.speed ?? 0.0005;
+        this.#speedSlider.max = "0.0003";
+        this.#speedSlider.step = "0.00001";
+        this.#speedSlider.value = this.#game.motionStrategy?.speed ?? 0.0001;
 
         this.#speedSlider.style.position = "absolute";
         this.#speedSlider.style.bottom = "20px";
