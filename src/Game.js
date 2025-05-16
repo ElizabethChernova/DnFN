@@ -43,7 +43,7 @@ export class Game {
                 break;
             case GameMode.PARTICLE_DYNAMICS:
                 this.populateForceSources();
-                this.#motionStrategy = new ParticleDynamicsStrategy(screenWidth, screenHeight, this.#forceSources);
+                this.#motionStrategy = new ParticleDynamicsStrategy(screenWidth, screenHeight, this.#forceSources, speed);
                 break;
             default:
                 throw new Error(`Game mode "${gameMode}" is not yet implemented`);
@@ -168,4 +168,10 @@ export class Game {
         const objectIndex = this.#flyingObjects.indexOf(flyingObject);
         this.#flyingObjects.splice(objectIndex, 1);
     }
+    setSpeed(newSpeed) {
+        if (this.#motionStrategy && typeof this.#motionStrategy.speed === "number") {
+            this.#motionStrategy.speed = newSpeed;
+        }
+    }
+
 }

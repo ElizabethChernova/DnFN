@@ -1,10 +1,11 @@
 import { MotionStrategy } from "./MotionStrategy.js";
 
 export class PathInterpolationStrategy extends MotionStrategy {
-    speed = 0.0005;
 
-    constructor(screenWidth, screenHeight) {
+
+    constructor(screenWidth, screenHeight, speed= 0.0001) {
         super(screenWidth, screenHeight);
+        this.speed= speed;
     }
 
     setupInitialState(flyingObject) {
@@ -13,7 +14,14 @@ export class PathInterpolationStrategy extends MotionStrategy {
         flyingObject.y = y;
         flyingObject.rotation = 0;
         flyingObject.scale = 1;
-        flyingObject.motionState = { path: this.#generateRandomPath({x, y}), pathProgress: 0 };
+        //flyingObject.motionState = { path: this.#generateRandomPath({x, y}), pathProgress: 0 };
+        const path = this.#generateRandomPath({ x, y });
+
+        flyingObject.motionState = {
+            path: path,
+            pathProgress: 0,
+        };
+
     }
 
     advanceStates(flyingObjects, timeDelta) {
@@ -52,25 +60,51 @@ export class PathInterpolationStrategy extends MotionStrategy {
     }
 
     #generateRandomPath(startPosition) {
-        const path = [startPosition];
-        // Add random control points
-        path.push({ x: Math.random() * this.screenWidth, y: Math.random() * this.screenHeight });
-        path.push({ x: Math.random() * this.screenWidth, y: Math.random() * this.screenHeight });
+         const path = [startPosition];
+
+         const controlPointCount = 4 + Math.floor(Math.random() * 3);
+         for (let i = 0; i < controlPointCount; i++) {
+             path.push({
+                 x: Math.random() * this.screenWidth,
+                 y: Math.random() * this.screenHeight
+             });
+         }
+//here
+        const first = path[0];
+        const second = path[1];
+        const penultimate = path[path.length - 2];
+        const last = path[path.length - 1];
+
+        path.unshift({ x: 2 * first.x - second.x, y: 2 * first.y - second.y });
+        path.push({ x: 2 * last.x - penultimate.x, y: 2 * last.y - penultimate.y });
+
 
         return path;
-    }
-
+     }
     #getPointOnPath(path, progress) {
-        // Function for calculating the current point on the path based on progress
-        const p0 = path[0];
-        const p1 = path[1];
-        const p2 = path[2];
+        const numSegments = path.length - 3; // catmull-rom needs 4 points per segment
+        const segmentProgress = progress * numSegments;
+        const segmentIndex = Math.floor(segmentProgress);
+        const t = segmentProgress - segmentIndex;
 
-        const x = (1 - progress) * (1 - progress) * p0.x + 2 * (1 - progress) * progress * p1.x + progress * progress * p2.x;
-        const y = (1 - progress) * (1 - progress) * p0.y + 2 * (1 - progress) * progress * p1.y + progress * progress * p2.y;
+        const p0 = path[segmentIndex];
+        const p1 = path[segmentIndex + 1];
+        const p2 = path[segmentIndex + 2];
+        const p3 = path[segmentIndex + 3];
 
-        return { x, y };
+        return this.#catmullRom(p0, p1, p2, p3, t);
     }
+//    #getPointOnPath(path, progress) {
+//        // Function for calculating the current point on the path based on progress
+//        const p0 = path[0];
+//        const p1 = path[1];
+//        const p2 = path[2];
+//
+//        const x = (1 - progress) * (1 - progress) * p0.x + 2 * (1 - progress) * progress * p1.x + progress * progress * p2.x;
+//        const y = (1 - progress) * (1 - progress) * p0.y + 2 * (1 - progress) * progress * p1.y + progress * progress * p2.y;
+//
+//        return { x, y };
+//    }
 
     // Catmull-Rom interpolation between 4 points
     #catmullRom(p0, p1, p2, p3, t) {

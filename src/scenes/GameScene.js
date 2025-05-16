@@ -7,7 +7,9 @@ export class GameScene extends Scene {
     #scoreText;
     #flyingObjectSprites = {};
     #forceSourceSprites = [];
-
+//here
+    #speedSlider;
+    #speedLabel;
     constructor(sceneManager) {
         super(sceneManager);
     }
@@ -46,6 +48,42 @@ export class GameScene extends Scene {
         this.addChild(this.#scoreText);
 
         this.#createForceSourceSprites();
+
+        this.#speedSlider = document.createElement("input");
+        this.#speedSlider.type = "range";
+        this.#speedSlider.min = "0.00001";
+        this.#speedSlider.max = "0.001";
+        this.#speedSlider.step = "0.0001";
+        this.#speedSlider.value = this.#game.motionStrategy?.speed ?? 0.0005;
+
+        this.#speedSlider.style.position = "absolute";
+        this.#speedSlider.style.bottom = "20px";
+        this.#speedSlider.style.left = "50%";
+        this.#speedSlider.style.transform = "translateX(-50%)";
+        this.#speedSlider.style.zIndex = "100";
+        this.#speedSlider.style.width = "300px";
+        document.body.appendChild(this.#speedSlider);
+
+        this.#speedLabel = document.createElement("div");
+        this.#speedLabel.innerText = `Швидкість: ${this.#speedSlider.value}`;
+        this.#speedLabel.style.position = "absolute";
+        this.#speedLabel.style.bottom = "50px";
+        this.#speedLabel.style.left = "50%";
+        this.#speedLabel.style.transform = "translateX(-50%)";
+        this.#speedLabel.style.zIndex = "100";
+        this.#speedLabel.style.color = "white";
+        this.#speedLabel.style.fontFamily = "Arial";
+        this.#speedLabel.style.fontSize = "16px";
+        document.body.appendChild(this.#speedLabel);
+
+        this.#speedSlider.addEventListener("input", () => {
+            const newSpeed = parseFloat(this.#speedSlider.value);
+            this.#speedLabel.innerText = `Швидкість: ${newSpeed.toFixed(4)}`;
+            if (typeof this.#game.setSpeed === "function") {
+                this.#game.setSpeed(newSpeed);
+            }
+        });
+
     }
 
     animationUpdate(deltaTime) {
@@ -62,6 +100,12 @@ export class GameScene extends Scene {
 
         this.#flyingObjectSprites = {};
         this.#forceSourceSprites = [];
+        //here
+        this.#speedSlider?.remove();
+        this.#speedLabel?.remove();
+        this.#speedSlider = null;
+        this.#speedLabel = null;
+//till here
     }
 
     onWindowResize(newWidth, newHeight) {
