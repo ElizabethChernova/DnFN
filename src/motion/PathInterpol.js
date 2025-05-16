@@ -77,6 +77,31 @@ export class PathInterpolationStrategy extends MotionStrategy {
              });
          }
 //here
+// Генеруємо останню точку поза межами екрану
+    const offset = 100;
+    const side = Math.floor(Math.random() * 4);
+    let lastX, lastY;
+
+    switch (side) {
+        case 0: // зверху
+            lastX = Math.random() * this.screenWidth;
+            lastY = -offset;
+            break;
+        case 1: // знизу
+            lastX = Math.random() * this.screenWidth;
+            lastY = this.screenHeight + offset;
+            break;
+        case 2: // зліва
+            lastX = -offset;
+            lastY = Math.random() * this.screenHeight;
+            break;
+        case 3: // справа
+            lastX = this.screenWidth + offset;
+            lastY = Math.random() * this.screenHeight;
+            break;
+    }
+
+    path.push({ x: lastX, y: lastY });
         const first = path[0];
         const second = path[1];
         const penultimate = path[path.length - 2];
