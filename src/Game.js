@@ -28,7 +28,8 @@ export class Game {
 
     #remainingTime = 60; // [s] // TODO: actually limit time
     #score = 0;
-
+ //todo adapt speed. I just changed to this.#speed in consructor that it works
+    #speed = 0.001;
     isPaused = false;
 
     constructor(gameMode, screenWidth, screenHeight) {
@@ -43,7 +44,7 @@ export class Game {
                 break;
             case GameMode.PARTICLE_DYNAMICS:
                 this.populateForceSources();
-                this.#motionStrategy = new ParticleDynamicsStrategy(screenWidth, screenHeight, this.#forceSources, speed);
+                this.#motionStrategy = new ParticleDynamicsStrategy(screenWidth, screenHeight, this.#forceSources, this.#speed);
                 break;
             default:
                 throw new Error(`Game mode "${gameMode}" is not yet implemented`);

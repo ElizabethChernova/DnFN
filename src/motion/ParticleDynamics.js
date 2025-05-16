@@ -3,9 +3,10 @@ import { MotionStrategy } from "./MotionStrategy.js";
 export class ParticleDynamicsStrategy extends MotionStrategy {
     #forceSources;
 
-    constructor(screenWidth, screenHeight, forceSources) {
+    constructor(screenWidth, screenHeight, forceSources, speed) {
         super(screenWidth, screenHeight);
         this.#forceSources = forceSources;
+        this.speed= speed;
     }
 
     setupInitialState(flyingObject) {
