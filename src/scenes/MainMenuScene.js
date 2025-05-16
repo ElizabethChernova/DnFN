@@ -77,3 +77,13 @@ export class MainMenuScene extends Scene {
         this.#menuEntry2.y = 500;
     }
 }
+
+/*
+        const buttonGraphic = new PIXI.Graphics()
+            .roundRect(0, 0, 100, 50, 15).fill(0xFFFFFF)
+
+        const button = new PIXIUI.Button(buttonGraphic);
+
+        button.onPress.connect(() => console.log('onPress'));
+        list.addChild(button.view);
+         */

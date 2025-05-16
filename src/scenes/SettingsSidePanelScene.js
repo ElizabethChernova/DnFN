@@ -4,17 +4,37 @@ export class SettingsSidePanelScene extends Scene {
     #margin = 20;
     #elementWidth = 400 - 2 * this.#margin;
 
-    #sliderHeight = 15;
-    #sliderBorderColor = "#FFFFFF";
+    #accentColor1 = "#16C47F";
+    #accentColor2 = "#FFD65A";
+    #accentColor3 = "#FF9D23";
+    #accentColor4 = "#F93827";
+    #secondaryColor1 = "#D1E9F6";
+    #secondaryColor2 = "#F6EACB";
+    #secondaryColor3 = "#F1D3CE";
+    #secondaryColor4 = "#EECAD5";
+    #offWhiteColor = "#FFFFFA";
+    #almostBlackColor = "#211E21";
+
+    #sliderHeight = 10;
+    #sliderBorderColor = this.#offWhiteColor;
     #sliderBorder = 2;
-    #sliderBackgroundColor = "#FE6048";
-    #sliderFillColor = "#00B1DD";
-    #sliderCornerRadius = 20;
+    #sliderBackgroundColor = this.#secondaryColor2;
+    #sliderFillColor = this.#secondaryColor3;
+    #sliderCornerRadius = 5;
     #sliderHandleBorder = 2;
-    #sliderHandleColor = "#A5E34D";
+    #sliderHandleColor = this.#accentColor1;
     #sliderHandleRadius = 12;
-    #sliderFontColor = "#FFFFFF";
-    #sliderFontSize = 16;
+    #sliderFontColor = this.#offWhiteColor;
+    #sliderFontSize = 14;
+
+    #selectHeight = 30;
+    #selectRadius = 5;
+    #selectOpenBGColor = this.#secondaryColor2;
+    #selectClosedBGColor = this.#secondaryColor2;
+    #selectSelectedColor = this.#accentColor2;
+    #selectHoverColor = this.#secondaryColor1;
+    #selectFontColor = this.#almostBlackColor;
+    #selectFontSize = 16;
 
     constructor(sceneManager) {
         super(sceneManager);
@@ -25,33 +45,28 @@ export class SettingsSidePanelScene extends Scene {
         list.position.x = this.#margin;
         list.position.y = this.#margin;
 
-        /*
-        const buttonGraphic = new PIXI.Graphics()
-            .roundRect(0, 0, 100, 50, 15).fill(0xFFFFFF)
+        list.addChild(this.#createLabel("Maximum FPS (0 = no limit)"));
 
-        const button = new PIXIUI.Button(buttonGraphic);
+        let maxFPSSlider = this.#createSlider(0, 120);
+        maxFPSSlider.value = this.sceneManager.maxFPS;
+        maxFPSSlider.onUpdate.connect((value) => this.sceneManager.maxFPS = value);
+        list.addChild(maxFPSSlider);
 
-        button.onPress.connect(() => console.log('onPress'));
-        list.addChild(button.view);
-         */
+        list.addChild(this.#createLabel("Animation rate [Hz]"));
 
-        let infoText = this.#createLabel("Maximum FPS (0 = no limit)");
-        //this.#infoText.anchor.x = 0.5;
-        list.addChild(infoText);
+        let animationRateSlider = this.#createSlider(1, 240);
+        animationRateSlider.value = this.sceneManager.animationRate;
+        animationRateSlider.onUpdate.connect((value) => this.sceneManager.animationRate = value);
+        list.addChild(animationRateSlider);
 
-        let slider = this.#createSlider();
-        slider.value = 10;
-        slider.onUpdate.connect((value) => console.log(`${value}`));
-        list.addChild(slider);
+        list.addChild(this.#createLabel("Integration method"));
 
-        let infoText2 = this.#createLabel("Animation rate [Hz]");
-        //this.#infoText.anchor.x = 0.5;
-        list.addChild(infoText2);
-
-        let slider2 = this.#createSlider();
-        slider2.value = 50;
-        slider2.onUpdate.connect((value) => console.log(`${value}`));
-        list.addChild(slider2);
+        let select = this.#createSelect(["Euler", "RK4"]);
+        select.onSelect.connect((_, text) =>
+        {
+            console.log("Selected " + text);
+        });
+        list.addChild(select);
 
         this.addChild(list);
     }
@@ -89,7 +104,7 @@ export class SettingsSidePanelScene extends Scene {
         });
     }
 
-    #createSlider() {
+    #createSlider(min, max) {
         const bg = new PIXI.Graphics()
             .roundRect(0, 0, this.#elementWidth, this.#sliderHeight, this.#sliderCornerRadius)
             .fill(this.#sliderBorderColor)
@@ -113,8 +128,8 @@ export class SettingsSidePanelScene extends Scene {
             bg,
             fill,
             slider,
-            min: 0,
-            max: 240,
+            min,
+            max,
             step: 1,
             value: 50,
             valueTextStyle: {
@@ -123,6 +138,48 @@ export class SettingsSidePanelScene extends Scene {
                 fontFamily: "Roboto Regular",
             },
             showValue: true,
+        });
+    }
+
+    #createSelect(items) {
+        const textStyle = {
+            fill: this.#selectFontColor,
+            fontSize: this.#selectFontSize,
+            fontFamily: "Roboto Regular",
+        };
+
+        // Closed BG
+        const closedBGView = new PIXI.Container();
+        const closedBG = new PIXI.Graphics()
+            .roundRect(0, 0, this.#elementWidth, this.#selectHeight, this.#selectRadius)
+            .fill(this.#selectClosedBGColor);
+        closedBGView.addChild(closedBG);
+
+        // Open BG
+        const openBGView = new PIXI.Container();
+        const openBG = new PIXI.Graphics()
+            .roundRect(0, 0, this.#elementWidth, this.#selectHeight * items.length + 1, this.#selectRadius)
+            .fill(this.#selectOpenBGColor);
+        openBGView.addChild(openBG);
+
+        return new PIXIUI.Select({
+            closedBG: closedBGView,
+            openBG: openBGView,
+            textStyle,
+            items: {
+                items,
+                selectColor: this.#selectSelectedColor,
+                hoverColor: this.#selectHoverColor,
+                width: this.#elementWidth,
+                height: this.#selectHeight,
+                textStyle,
+                radius: this.#selectRadius,
+            },
+            scrollBox: {
+                width: this.#elementWidth,
+                height: this.#selectHeight * 5,
+                radius: this.#selectRadius,
+            },
         });
     }
 }
