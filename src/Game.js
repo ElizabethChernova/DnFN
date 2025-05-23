@@ -1,9 +1,13 @@
 import { PathInterpolationStrategy } from "./motion/PathInterpol.js";
 import { ParticleDynamicsStrategy } from "./motion/ParticleDynamics.js";
+import { RigidBodyStrategy } from "./motion/RigidBody.js";
 import { FlyingObject, FlyingObjectTypes } from "./FlyingObject.js";
 import { ForceSource } from "./force/ForceSource.js";
 import { GravitationalForce } from "./force/GravitationalForce.js";
 import { DragForce } from "./force/DragForce.js";
+import { PathInterpolationVisualizer } from "./visualizers/PathInterpolationVisualizer.js";
+import { ParticleDynamicsVisualizer } from "./visualizers/ParticleDynamicsVisualizer.js";
+import { RigidBodyVisualizer} from "./visualizers/RigidBodyVisualizer.js";
 import { lerp, pointDistance } from "./Util.js"
 
 export const GameMode = Object.freeze({
@@ -17,6 +21,7 @@ export class Game {
     #screenWidth;
     #screenHeight;
     #motionStrategy;
+    #visualizer;
 
     #flyingObjects = [];
     #forceSources = [];
@@ -28,8 +33,7 @@ export class Game {
 
     #remainingTime = 60; // [s] // TODO: actually limit time
     #score = 0;
- //todo adapt speed. I just changed to this.#speed in consructor that it works
-    #speed = 0.001;
+
     isPaused = false;
 
     constructor(gameMode, screenWidth, screenHeight) {
@@ -41,10 +45,16 @@ export class Game {
         switch (gameMode) {
             case GameMode.PATH_INTERPOLATION:
                 this.#motionStrategy = new PathInterpolationStrategy(screenWidth, screenHeight);
+                this.#visualizer = new PathInterpolationVisualizer(this.#motionStrategy);
                 break;
             case GameMode.PARTICLE_DYNAMICS:
                 this.populateForceSources();
-                this.#motionStrategy = new ParticleDynamicsStrategy(screenWidth, screenHeight, this.#forceSources, this.#speed);
+                this.#motionStrategy = new ParticleDynamicsStrategy(screenWidth, screenHeight, this.#forceSources);
+                this.#visualizer = new ParticleDynamicsVisualizer(this.#motionStrategy);
+                break;
+            case GameMode.RIGID_BODY:
+                this.#motionStrategy = new RigidBodyStrategy(screenWidth, screenHeight);
+                this.#visualizer = new RigidBodyVisualizer(this.#motionStrategy);
                 break;
             default:
                 throw new Error(`Game mode "${gameMode}" is not yet implemented`);
@@ -100,7 +110,7 @@ export class Game {
 
     populateForceSources() {
         // TODO: replace with more meaningful initialization
-        this.#forceSources.push(new GravitationalForce(500, 500, 5e5));
+        this.#forceSources.push(new GravitationalForce(500, 500, 1e6));
         this.#forceSources.push(new DragForce(0.0015));
     }
 
@@ -133,6 +143,14 @@ export class Game {
 
     get gameMode() {
         return this.#gameMode;
+    }
+
+    get motionStrategy() {
+        return this.#motionStrategy;
+    }
+
+    get visualizer() {
+        return this.#visualizer;
     }
 
     get flyingObjects() {
@@ -169,10 +187,4 @@ export class Game {
         const objectIndex = this.#flyingObjects.indexOf(flyingObject);
         this.#flyingObjects.splice(objectIndex, 1);
     }
-    setSpeed(newSpeed) {
-        if (this.#motionStrategy && typeof this.#motionStrategy.speed === "number") {
-            this.#motionStrategy.speed = newSpeed;
-        }
-    }
-
 }

@@ -5,11 +5,10 @@ export class GameScene extends Scene {
     #game = null;
     #backgroundSprite;
     #scoreText;
+    #visualizationContainer;
     #flyingObjectSprites = {};
     #forceSourceSprites = [];
-//here
-    #speedSlider;
-    #speedLabel;
+
     constructor(sceneManager) {
         super(sceneManager);
     }
@@ -24,7 +23,7 @@ export class GameScene extends Scene {
                 this.#game = new Game(GameMode.PARTICLE_DYNAMICS, this.sceneManager.screenWidth, this.sceneManager.screenHeight);
                 this.#backgroundSprite = PIXI.Sprite.from('res/backgroundSpace.png');
                 break;
-            case "RigidBody":
+            case "rigidBody":
                 this.#game = new Game(GameMode.RIGID_BODY, this.sceneManager.screenWidth, this.sceneManager.screenHeight);
                 this.#backgroundSprite = PIXI.Sprite.from('res/backgroundEden.png');
                 break;
@@ -47,49 +46,18 @@ export class GameScene extends Scene {
         this.#readjustScore(this.sceneManager.screenWidth, this.sceneManager.screenHeight);
         this.addChild(this.#scoreText);
 
+        this.#visualizationContainer = new PIXI.Container();
+        this.addChild(this.#visualizationContainer);
+
         this.#createForceSourceSprites();
-
-        this.#speedSlider = document.createElement("input");
-        this.#speedSlider.type = "range";
-        this.#speedSlider.min = "0.00001";
-        this.#speedSlider.max = "0.0003";
-        this.#speedSlider.step = "0.00001";
-        this.#speedSlider.value = this.#game.motionStrategy?.speed ?? 0.0001;
-
-        this.#speedSlider.style.position = "absolute";
-        this.#speedSlider.style.bottom = "20px";
-        this.#speedSlider.style.left = "50%";
-        this.#speedSlider.style.transform = "translateX(-50%)";
-        this.#speedSlider.style.zIndex = "100";
-        this.#speedSlider.style.width = "300px";
-        document.body.appendChild(this.#speedSlider);
-
-        this.#speedLabel = document.createElement("div");
-        this.#speedLabel.innerText = `Швидкість: ${this.#speedSlider.value}`;
-        this.#speedLabel.style.position = "absolute";
-        this.#speedLabel.style.bottom = "50px";
-        this.#speedLabel.style.left = "50%";
-        this.#speedLabel.style.transform = "translateX(-50%)";
-        this.#speedLabel.style.zIndex = "100";
-        this.#speedLabel.style.color = "white";
-        this.#speedLabel.style.fontFamily = "Arial";
-        this.#speedLabel.style.fontSize = "16px";
-        document.body.appendChild(this.#speedLabel);
-
-        this.#speedSlider.addEventListener("input", () => {
-            const newSpeed = parseFloat(this.#speedSlider.value);
-            this.#speedLabel.innerText = `Швидкість: ${newSpeed.toFixed(4)}`;
-            if (typeof this.#game.setSpeed === "function") {
-                this.#game.setSpeed(newSpeed);
-            }
-        });
-
     }
 
     animationUpdate(deltaTime) {
         this.#game.animationUpdate(deltaTime);
         this.#updateFlyingObjectSprites();
         this.#scoreText.text = "Score: " + this.#game.score;
+        this.#visualizationContainer.removeChildren();
+        this.#game.visualizer.drawTo(this.#visualizationContainer);
     }
 
     exitScene() {
@@ -100,18 +68,12 @@ export class GameScene extends Scene {
 
         this.#flyingObjectSprites = {};
         this.#forceSourceSprites = [];
-        //here
-        this.#speedSlider?.remove();
-        this.#speedLabel?.remove();
-        this.#speedSlider = null;
-        this.#speedLabel = null;
-//till here
     }
 
-    onWindowResize(newWidth, newHeight) {
-        this.#game.resizeScreen(newWidth, newHeight);
-        this.#readjustBackground(newWidth, newHeight);
-        this.#readjustScore(newWidth, newHeight);
+    onSceneResize(sceneWidth, sceneHeight) {
+        this.#game.resizeScreen(sceneWidth, sceneHeight);
+        this.#readjustBackground(sceneWidth, sceneHeight);
+        this.#readjustScore(sceneWidth, sceneHeight);
     }
 
     onKeyDown(key) {
@@ -120,16 +82,25 @@ export class GameScene extends Scene {
                 this.#game.isPaused = !this.#game.isPaused;
                 break;
             case "KeyS":
-                console.log("Open settings"); // TODO
+                if (this.sceneManager.isSidePanelVisible) {
+                    this.sceneManager.hideSidePanel();
+                } else {
+                    this.sceneManager.displaySidePanel("settingsSidePanel");
+                }
                 break;
             case "Escape":
-                this.sceneManager.changeScene("settings");
+                this.sceneManager.hideSidePanel();
+                this.sceneManager.changeScene("mainMenu");
                 break;
         }
     }
 
     onMousePointerDown(x, y) {
         this.#game.shoot(x, y);
+    }
+
+    get game() {
+        return this.#game;
     }
 
     #setupBackground() {
@@ -147,7 +118,7 @@ export class GameScene extends Scene {
 
         this.#backgroundSprite.anchor.x = 0.5;
         this.#backgroundSprite.anchor.y = 0.5;
-        this.#readjustBackground(this.sceneManager.screenWidth, this.sceneManager.screenHeight);
+        this.#readjustBackground(this.sceneManager.sceneWidth, this.sceneManager.sceneHeight);
         this.addChildAt(this.#backgroundSprite, 0);
     }
 
@@ -161,8 +132,8 @@ export class GameScene extends Scene {
         sprite.y = height / 2;
     }
 
-    #readjustScore(screenWidth, screenHeight) {
-        this.#scoreText.x = screenWidth - 10;
+    #readjustScore(width, height) {
+        this.#scoreText.x = width - 10;
         this.#scoreText.y = 10;
     }
 

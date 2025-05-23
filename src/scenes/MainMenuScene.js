@@ -4,6 +4,7 @@ export class MainMenuScene extends Scene {
     #gameNameText;
     #menuEntry1;
     #menuEntry2;
+    #menuEntry3;
 
     constructor(sceneManager) {
         super(sceneManager);
@@ -43,14 +44,28 @@ export class MainMenuScene extends Scene {
         this.#menuEntry2.anchor.x = 0.5;
         this.addChild(this.#menuEntry2);
 
+        this.#menuEntry3 = new PIXI.Text({
+            text: "Press (3) for rigid body mode",
+            style: {
+                fontFamily: "Roboto Regular",
+                fontSize: 30,
+                fill: "#ffffff"
+            }
+        });
+        this.#menuEntry3.anchor.x = 0.5;
+        this.addChild(this.#menuEntry3);
+
         this.#positionTextElements(this.sceneManager.screenWidth, this.sceneManager.screenHeight);
+    }
+
+    exitScene() {
+        this.removeChildren();
     }
 
     animationUpdate(deltaTime) {
     }
 
     onKeyDown(key) {
-        console.log(key)
         switch (key) {
             case "Digit1":
                 this.sceneManager.changeScene("game", { gameMode: "pathInterpolation" });
@@ -58,11 +73,14 @@ export class MainMenuScene extends Scene {
             case "Digit2":
                 this.sceneManager.changeScene("game", { gameMode: "particleDynamics" });
                 break;
+            case "Digit3":
+                this.sceneManager.changeScene("game", { gameMode: "rigidBody" });
+                break;
         }
     }
 
-    onWindowResize(newWidth, newHeight) {
-        this.#positionTextElements(newWidth, newHeight);
+    onSceneResize(sceneWidth, sceneHeight) {
+        this.#positionTextElements(sceneWidth, sceneHeight);
     }
 
     #positionTextElements(screenWidth, screenHeight) {
@@ -72,5 +90,17 @@ export class MainMenuScene extends Scene {
         this.#menuEntry1.y = 450;
         this.#menuEntry2.x = screenWidth / 2;
         this.#menuEntry2.y = 500;
+        this.#menuEntry3.x = screenWidth / 2;
+        this.#menuEntry3.y = 550;
     }
 }
+
+/*
+        const buttonGraphic = new PIXI.Graphics()
+            .roundRect(0, 0, 100, 50, 15).fill(0xFFFFFF)
+
+        const button = new PIXIUI.Button(buttonGraphic);
+
+        button.onPress.connect(() => console.log('onPress'));
+        list.addChild(button.view);
+         */
