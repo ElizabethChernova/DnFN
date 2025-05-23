@@ -4,6 +4,7 @@ export class MainMenuScene extends Scene {
     #gameNameText;
     #menuEntry1;
     #menuEntry2;
+    #menuEntry3;
 
     constructor(sceneManager) {
         super(sceneManager);
@@ -43,6 +44,17 @@ export class MainMenuScene extends Scene {
         this.#menuEntry2.anchor.x = 0.5;
         this.addChild(this.#menuEntry2);
 
+        this.#menuEntry3 = new PIXI.Text({
+            text: "Press (3) for rigid body mode",
+            style: {
+                fontFamily: "Roboto Regular",
+                fontSize: 30,
+                fill: "#ffffff"
+            }
+        });
+        this.#menuEntry3.anchor.x = 0.5;
+        this.addChild(this.#menuEntry3);
+
         this.#positionTextElements(this.sceneManager.screenWidth, this.sceneManager.screenHeight);
     }
 
@@ -61,6 +73,9 @@ export class MainMenuScene extends Scene {
             case "Digit2":
                 this.sceneManager.changeScene("game", { gameMode: "particleDynamics" });
                 break;
+            case "Digit3":
+                this.sceneManager.changeScene("game", { gameMode: "rigidBody" });
+                break;
         }
     }
 
@@ -75,6 +90,8 @@ export class MainMenuScene extends Scene {
         this.#menuEntry1.y = 450;
         this.#menuEntry2.x = screenWidth / 2;
         this.#menuEntry2.y = 500;
+        this.#menuEntry3.x = screenWidth / 2;
+        this.#menuEntry3.y = 550;
     }
 }
 

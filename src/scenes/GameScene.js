@@ -23,7 +23,7 @@ export class GameScene extends Scene {
                 this.#game = new Game(GameMode.PARTICLE_DYNAMICS, this.sceneManager.screenWidth, this.sceneManager.screenHeight);
                 this.#backgroundSprite = PIXI.Sprite.from('res/backgroundSpace.png');
                 break;
-            case "RigidBody":
+            case "rigidBody":
                 this.#game = new Game(GameMode.RIGID_BODY, this.sceneManager.screenWidth, this.sceneManager.screenHeight);
                 this.#backgroundSprite = PIXI.Sprite.from('res/backgroundEden.png');
                 break;

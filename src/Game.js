@@ -1,5 +1,6 @@
 import { PathInterpolationStrategy } from "./motion/PathInterpol.js";
 import { ParticleDynamicsStrategy } from "./motion/ParticleDynamics.js";
+import { RigidBodyStrategy } from "./motion/RigidBody.js";
 import { FlyingObject, FlyingObjectTypes } from "./FlyingObject.js";
 import { ForceSource } from "./force/ForceSource.js";
 import { GravitationalForce } from "./force/GravitationalForce.js";
@@ -50,6 +51,10 @@ export class Game {
                 this.populateForceSources();
                 this.#motionStrategy = new ParticleDynamicsStrategy(screenWidth, screenHeight, this.#forceSources);
                 this.#visualizer = new ParticleDynamicsVisualizer(this.#motionStrategy);
+                break;
+            case GameMode.RIGID_BODY:
+                this.#motionStrategy = new RigidBodyStrategy(screenWidth, screenHeight);
+                this.#visualizer = new RigidBodyVisualizer(this.#motionStrategy);
                 break;
             default:
                 throw new Error(`Game mode "${gameMode}" is not yet implemented`);
