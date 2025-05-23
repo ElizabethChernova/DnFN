@@ -104,7 +104,14 @@ export class SettingsSidePanelScene extends Scene {
     }
 
     #addPathInterpolationSettingsTo(container) {
-        // TODO: add settings for rigid body mode here
+        container.addChild(this.#createLabel("Path interpolation speed"));
+
+        const minSpeed = 0.00001;
+        const maxSpeed = 0.0003;
+        let speedSlider = this.#createSlider(1, 100);
+        speedSlider.value = this.#remapValue(this.#game.motionStrategy.speed, minSpeed, maxSpeed, 1, 100);
+        speedSlider.onUpdate.connect((value) => this.#game.motionStrategy.speed = this.#remapValue(value, 1, 100, minSpeed, maxSpeed));
+        container.addChild(speedSlider);
     }
 
     #addParticleDynamicsSettingsTo(container) {
@@ -130,6 +137,10 @@ export class SettingsSidePanelScene extends Scene {
 
     #addRigidBodySettingsTo(container) {
         // TODO: add settings for rigid body mode here
+    }
+
+    #remapValue(value, min_value, max_value, new_min, new_max) {
+        return ((value - min_value) / (max_value - min_value)) * (new_max - new_min) + new_min;
     }
 
     #createLabel(text) {

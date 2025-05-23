@@ -1,11 +1,9 @@
 import { MotionStrategy } from "./MotionStrategy.js";
 
 export class PathInterpolationStrategy extends MotionStrategy {
-
-
     constructor(screenWidth, screenHeight, speed= 0.0001) {
         super(screenWidth, screenHeight);
-        this.speed= speed;
+        this.speed = speed;
     }
 
     setupInitialState(flyingObject) {
