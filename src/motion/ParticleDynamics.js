@@ -1,4 +1,5 @@
 import { MotionStrategy } from "./MotionStrategy.js";
+import { FlyingObject, FlyingObjectTypes } from "../FlyingObject.js";
 
 export class ParticleDynamicsStrategy extends MotionStrategy {
     #forceSources;
@@ -29,6 +30,29 @@ export class ParticleDynamicsStrategy extends MotionStrategy {
             }
             this.#solve(flyingObject, timeDelta / 1000);
         }
+    }
+
+    getForceField(gridSize = 100) {
+        let forceField = [];
+        for (let y = 0; y < this.screenHeight; y += gridSize) {
+            for (let x = 0; x < this.screenWidth; x += gridSize) {
+                let dummyObject = new FlyingObject(FlyingObjectTypes.burger);
+                dummyObject.x = x;
+                dummyObject.y = y;
+                dummyObject.motionState = {
+                    mass: 1,
+                    velocity: [0, 0],
+                    force: [0, 0]
+                };
+
+                for (const forceSource of this.#forceSources)
+                {
+                    forceSource.applyTo(dummyObject);
+                }
+                forceField.push({x: x, y: y, force: dummyObject.motionState.force});
+            }
+        }
+        return forceField;
     }
 
     #solve(particle, dt) {

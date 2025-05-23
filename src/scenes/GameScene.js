@@ -5,6 +5,7 @@ export class GameScene extends Scene {
     #game = null;
     #backgroundSprite;
     #scoreText;
+    #visualizationContainer;
     #flyingObjectSprites = {};
     #forceSourceSprites = [];
 
@@ -45,6 +46,9 @@ export class GameScene extends Scene {
         this.#readjustScore(this.sceneManager.screenWidth, this.sceneManager.screenHeight);
         this.addChild(this.#scoreText);
 
+        this.#visualizationContainer = new PIXI.Container();
+        this.addChild(this.#visualizationContainer);
+
         this.#createForceSourceSprites();
     }
 
@@ -52,6 +56,8 @@ export class GameScene extends Scene {
         this.#game.animationUpdate(deltaTime);
         this.#updateFlyingObjectSprites();
         this.#scoreText.text = "Score: " + this.#game.score;
+        this.#visualizationContainer.removeChildren();
+        this.#game.visualizer.drawTo(this.#visualizationContainer);
     }
 
     exitScene() {

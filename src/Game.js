@@ -4,6 +4,9 @@ import { FlyingObject, FlyingObjectTypes } from "./FlyingObject.js";
 import { ForceSource } from "./force/ForceSource.js";
 import { GravitationalForce } from "./force/GravitationalForce.js";
 import { DragForce } from "./force/DragForce.js";
+import { PathInterpolationVisualizer } from "./visualizers/PathInterpolationVisualizer.js";
+import { ParticleDynamicsVisualizer } from "./visualizers/ParticleDynamicsVisualizer.js";
+import { RigidBodyVisualizer} from "./visualizers/RigidBodyVisualizer.js";
 import { lerp, pointDistance } from "./Util.js"
 
 export const GameMode = Object.freeze({
@@ -17,6 +20,7 @@ export class Game {
     #screenWidth;
     #screenHeight;
     #motionStrategy;
+    #visualizer;
 
     #flyingObjects = [];
     #forceSources = [];
@@ -40,10 +44,12 @@ export class Game {
         switch (gameMode) {
             case GameMode.PATH_INTERPOLATION:
                 this.#motionStrategy = new PathInterpolationStrategy(screenWidth, screenHeight);
+                this.#visualizer = new PathInterpolationVisualizer(this.#motionStrategy);
                 break;
             case GameMode.PARTICLE_DYNAMICS:
                 this.populateForceSources();
                 this.#motionStrategy = new ParticleDynamicsStrategy(screenWidth, screenHeight, this.#forceSources);
+                this.#visualizer = new ParticleDynamicsVisualizer(this.#motionStrategy);
                 break;
             default:
                 throw new Error(`Game mode "${gameMode}" is not yet implemented`);
@@ -99,7 +105,7 @@ export class Game {
 
     populateForceSources() {
         // TODO: replace with more meaningful initialization
-        this.#forceSources.push(new GravitationalForce(500, 500, 5e5));
+        this.#forceSources.push(new GravitationalForce(500, 500, 1e6));
         this.#forceSources.push(new DragForce(0.0015));
     }
 
@@ -132,6 +138,10 @@ export class Game {
 
     get gameMode() {
         return this.#gameMode;
+    }
+
+    get visualizer() {
+        return this.#visualizer;
     }
 
     get flyingObjects() {

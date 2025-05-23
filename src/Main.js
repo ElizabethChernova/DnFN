@@ -17,6 +17,7 @@ document.body.appendChild(app.canvas);
 for (const flyingObjectType in FlyingObjectTypes) {
     await PIXI.Assets.load(FlyingObjectTypes[flyingObjectType].imagePath);
 }
+await PIXI.Assets.load("res/planet.png");
 await PIXI.Assets.load("res/backgroundEden.png");
 await PIXI.Assets.load("res/backgroundSpace.png");
 await PIXI.Assets.load("res/Roboto-Regular.woff2");
