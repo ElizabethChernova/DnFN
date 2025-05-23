@@ -140,6 +140,10 @@ export class Game {
         return this.#gameMode;
     }
 
+    get motionStrategy() {
+        return this.#motionStrategy;
+    }
+
     get visualizer() {
         return this.#visualizer;
     }

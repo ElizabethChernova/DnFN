@@ -50,6 +50,14 @@ export class SceneManager {
         console.log(`Registered scene "${name}"`);
     }
 
+    getScene(name) {
+        if (!(name in this.#scenes)) {
+            console.error(`Scene with name "${name}" doesn't exist`);
+            return;
+        }
+        return this.#scenes[name];
+    }
+
     changeScene(newSceneName, options = {}) {
         if (!(newSceneName in this.#scenes)) {
             console.error(`Scene with name "${newSceneName}" doesn't exist`);

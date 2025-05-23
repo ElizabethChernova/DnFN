@@ -99,6 +99,10 @@ export class GameScene extends Scene {
         this.#game.shoot(x, y);
     }
 
+    get game() {
+        return this.#game;
+    }
+
     #setupBackground() {
         switch (this.#game.gameMode) {
             case GameMode.PATH_INTERPOLATION:

@@ -1,6 +1,13 @@
 import { Scene } from "./Scene.js";
+import {PathInterpolationStrategy} from "../motion/PathInterpol.js";
+import {PathInterpolationVisualizer} from "../visualizers/PathInterpolationVisualizer.js";
+import {ParticleDynamicsStrategy} from "../motion/ParticleDynamics.js";
+import {ParticleDynamicsVisualizer} from "../visualizers/ParticleDynamicsVisualizer.js";
+import {GameMode} from "../Game.js";
 
 export class SettingsSidePanelScene extends Scene {
+    #game;
+
     #margin = 20;
     #elementWidth = 400 - 2 * this.#margin;
 
@@ -36,6 +43,16 @@ export class SettingsSidePanelScene extends Scene {
     #selectFontColor = this.#almostBlackColor;
     #selectFontSize = 16;
 
+    #checkBoxWidth = 20;
+    #checkBoxHeight = 20;
+    #checkBoxRadius = 5;
+    #checkBoxColor = this.#secondaryColor2;
+    #checkBoxBorderColor = this.#secondaryColor2;
+    #checkBoxFillColor = this.#accentColor1;
+    #checkBoxFillBorderColor = this.#offWhiteColor;
+    #checkBoxFontColor = this.#offWhiteColor;
+    #checkBoxFontSize = 16;
+
     constructor(sceneManager) {
         super(sceneManager);
     }
@@ -59,14 +76,19 @@ export class SettingsSidePanelScene extends Scene {
         animationRateSlider.onUpdate.connect((value) => this.sceneManager.animationRate = value);
         list.addChild(animationRateSlider);
 
-        list.addChild(this.#createLabel("Integration method"));
+        this.#game = this.sceneManager.getScene("game").game;
 
-        let select = this.#createSelect(["Euler", "RK4"]);
-        select.onSelect.connect((_, text) =>
-        {
-            console.log("Selected " + text);
-        });
-        list.addChild(select);
+
+        switch (this.#game.gameMode) {
+            case GameMode.PATH_INTERPOLATION:
+                this.#addPathInterpolationSettingsTo(list);
+                break;
+            case GameMode.PARTICLE_DYNAMICS:
+                this.#addParticleDynamicsSettingsTo(list);
+                break;
+            default:
+                throw new Error(`Settings: Unknown game mode`);
+        }
 
         this.addChild(list);
     }
@@ -78,19 +100,36 @@ export class SettingsSidePanelScene extends Scene {
     animationUpdate(deltaTime) {
     }
 
-    onKeyDown(key) {
-        console.log(key)
-        switch (key) {
-            case "Escape":
-                this.sceneManager.changeScene("game");
-                break;
-            case "KeyM":
-                this.sceneManager.changeScene("mainMenu");
-                break;
-        }
+    onSceneResize(sceneWidth, sceneHeight) {
     }
 
-    onSceneResize(sceneWidth, sceneHeight) {
+    #addPathInterpolationSettingsTo(container) {
+        // TODO: add settings for rigid body mode here
+    }
+
+    #addParticleDynamicsSettingsTo(container) {
+        container.addChild(this.#createLabel("Integration method"));
+
+        let select = this.#createSelect(["Euler", "RK4"]);
+        select.onSelect.connect((_, text) =>
+        {
+            console.log("Selected " + text);
+        });
+        container.addChild(select);
+
+        container.addChild(this.#createLabel("Visualizations"));
+
+        let forceFieldCheckbox = this.#createCheckbox("Force field");
+        forceFieldCheckbox.checked = this.#game.visualizer.displayForceField;
+        forceFieldCheckbox.onCheck.connect((checked) =>
+        {
+            this.#game.visualizer.displayForceField = checked;
+        });
+        container.addChild(forceFieldCheckbox);
+    }
+
+    #addRigidBodySettingsTo(container) {
+        // TODO: add settings for rigid body mode here
     }
 
     #createLabel(text) {
@@ -179,6 +218,34 @@ export class SettingsSidePanelScene extends Scene {
                 width: this.#elementWidth,
                 height: this.#selectHeight * 5,
                 radius: this.#selectRadius,
+            },
+        });
+    }
+
+    #createCheckbox(text) {
+        return new PIXIUI.CheckBox({
+            text,
+            checked: false,
+            style: {
+                unchecked: new PIXI.Graphics()
+                    .roundRect(-2, -2, this.#checkBoxWidth + 4, this.#checkBoxHeight + 4, this.#checkBoxRadius)
+                    .fill(this.#checkBoxBorderColor)
+                    .roundRect(0, 0, this.#checkBoxWidth, this.#checkBoxHeight, this.#checkBoxRadius)
+                    .fill(this.#checkBoxColor),
+                checked: new PIXI.Graphics()
+                    .roundRect(-2, -2, this.#checkBoxWidth + 4, this.#checkBoxHeight + 4, this.#checkBoxRadius)
+                    .fill(this.#checkBoxBorderColor)
+                    .roundRect(0, 0, this.#checkBoxWidth, this.#checkBoxHeight, this.#checkBoxRadius)
+                    .fill(this.#checkBoxColor)
+                    .roundRect(3, 3, this.#checkBoxWidth - 6, this.#checkBoxHeight - 6, this.#checkBoxRadius)
+                    .fill(this.#checkBoxFillBorderColor)
+                    .roundRect(5, 5, this.#checkBoxWidth - 10, this.#checkBoxHeight - 10, this.#checkBoxRadius)
+                    .fill(this.#checkBoxFillColor),
+                text: {
+                    fill: this.#checkBoxFontColor,
+                    fontSize: this.#checkBoxFontSize,
+                    fontFamily: "Roboto Regular",
+                },
             },
         });
     }

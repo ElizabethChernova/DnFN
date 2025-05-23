@@ -5,6 +5,8 @@ export class ParticleDynamicsVisualizer extends Visualizer {
     #forceFieldScreenWidth = 0;
     #forceFieldScreenHeight = 0;
 
+    displayForceField = false;
+
     drawTo(container) {
         // The force field visualization is only created once (and on screen resize), since it never changes
         if (!this.#forceFieldContainer ||
@@ -19,9 +21,9 @@ export class ParticleDynamicsVisualizer extends Visualizer {
 
             this.#forceFieldScreenWidth = this.motionStrategy.screenWidth;
             this.#forceFieldScreenHeight = this.motionStrategy.screenHeight;
-            console.log("Recompute force field")
         }
-        container.addChild(this.#forceFieldContainer);
+
+        if (this.displayForceField) container.addChild(this.#forceFieldContainer);
     }
 
     #drawForceIndicator(container, x, y, force_x, force_y) {
