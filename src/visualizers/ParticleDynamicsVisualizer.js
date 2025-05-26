@@ -27,7 +27,7 @@ export class ParticleDynamicsVisualizer extends Visualizer {
     }
 
     #drawForceIndicator(container, x, y, force_x, force_y) {
-        let scaling = 1; // scale force vectors, otherwise they would be too short to see
+        let scaling = 1.75; // scale force vectors, otherwise they would be too short to see
         const tipX = x + force_x * scaling;
         const tipY = y + force_y * scaling;
         const angle = Math.atan2(force_y, force_x);

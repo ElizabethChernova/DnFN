@@ -16,7 +16,7 @@ export class ParticleDynamicsStrategy extends MotionStrategy {
         flyingObject.rotation = 0;
         flyingObject.scale = 1;
         flyingObject.motionState = {
-            mass: 1,
+            mass: 0.5 + Math.random() * 0.5,
             velocity: [-500, (Math.random() - 0.5) * 200],
             force: [0, 0]
         };

@@ -67,7 +67,7 @@ export class Game {
         this.#motionStrategy.advanceStates(this.#flyingObjects, deltaTime);
 
         // Remove objects that moved outside the screen
-        const offset = 500; // how far objects must be outside the screen to be removed
+        const offset = 100; // how far objects must be outside the screen to be removed
         this.#flyingObjects = this.#flyingObjects.filter(entry =>
             entry.x > -offset && entry.x < this.#screenWidth + offset &&
             entry.y > -offset && entry.y < this.#screenHeight + offset
@@ -109,9 +109,27 @@ export class Game {
     }
 
     populateForceSources() {
-        // TODO: replace with more meaningful initialization
-        this.#forceSources.push(new GravitationalForce(500, 500, 1e6));
-        this.#forceSources.push(new DragForce(0.0015));
+        const num_force_sources = 3 + Math.round(Math.random() * 2); // spawn 3-5 force sources
+        for (let i = 0; i < num_force_sources;) {
+            const x = Math.round(Math.random() * this.#screenWidth);
+            const y = Math.round(Math.random() * this.#screenHeight);
+
+            const margin = 100;
+            if (x > this.#screenWidth - margin || x < margin) continue;
+            if (y > this.#screenHeight - margin || y < margin) continue;
+
+            const minDistance = 300;
+            let tooClose = false;
+            for (const forceSource of this.#forceSources) {
+                if (math.distance([x, y], [forceSource.x, forceSource.y]) < minDistance) tooClose = true;
+            }
+            if (tooClose) continue;
+
+            this.#forceSources.push(new GravitationalForce(x, y, 4e5));
+            i++;
+        }
+
+        this.#forceSources.push(new DragForce(0.006));
     }
 
     resizeScreen(newScreenWidth, newScreenHeight) {
