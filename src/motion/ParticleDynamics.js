@@ -10,23 +10,31 @@ export class ParticleDynamicsStrategy extends MotionStrategy {
     }
 
     setupInitialState(flyingObject) {
-        let {x, y} = this.#generateRandomSpawnPosition();
+        let {x, y, velocity} = this.#generateRandomSpawnPosition();
         flyingObject.x = x;
         flyingObject.y = y;
         flyingObject.rotation = 0;
         flyingObject.scale = 1;
         flyingObject.motionState = {
-            mass: 0.5 + Math.random() * 0.5,
-            velocity: [-500, (Math.random() - 0.5) * 200],
-            force: [0, 0]
+            mass: 0.5 + Math.random(), // we use a random weight between 0.5 and 1.5
+            velocity: velocity,
+            force: [0, 0],
+            remainingLifeTime: 5000 + Math.random() * 5000
         };
     }
 
     advanceStates(flyingObjects, timeDelta) {
         for (const flyingObject of flyingObjects) {
+            flyingObject.motionState.remainingLifeTime -= timeDelta;
+
+            flyingObject.motionState.force = [0, 0];
             for (const forceSource of this.#forceSources)
             {
                 forceSource.applyTo(flyingObject);
+            }
+            if (flyingObject.motionState.remainingLifeTime <= 0) {
+                // Make sure objects start to fly away when their lifetime is over
+                flyingObject.motionState.velocity = math.multiply(flyingObject.motionState.velocity, 1.01);
             }
             this.#solve(flyingObject, timeDelta / 1000);
         }
@@ -80,14 +88,20 @@ export class ParticleDynamicsStrategy extends MotionStrategy {
     }
 
     #generateRandomSpawnPosition() {
-        const side = 0 //Math.floor(Math.random() * 2); // TODO: revert to random
-        let x, y;
+        const side = Math.floor(Math.random() * 2); // TODO: revert to random
+        let x, y, velocity;
 
         switch (side) {
-            case 0: x = this.screenWidth + 50; y = Math.random() * this.screenHeight; break; // from right
-            case 1: x = -50; y = Math.random() * this.screenHeight; break; // from left
+            case 0: // from right
+                x = this.screenWidth + 50; y = Math.random() * this.screenHeight;
+                velocity = [-400, (Math.random() - 0.5) * 200];
+                break;
+            case 1: // from left
+                x = -50; y = Math.random() * this.screenHeight;
+                velocity = [400, (Math.random() - 0.5) * 200];
+                break;
         }
 
-        return {x, y};
+        return {x, y, velocity};
     }
 }
