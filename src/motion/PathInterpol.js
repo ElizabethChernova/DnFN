@@ -49,6 +49,34 @@ export class PathInterpolationStrategy extends MotionStrategy {
             flyingObject.rotation = Math.atan2(dy, dx);
         }
     }
+getPathField(gridSize = 100) {
+    const pathField = [];
+
+    // Для сітки по всьому екрану з кроком gridSize
+    for (let y = 0; y < this.screenHeight; y += gridSize) {
+        for (let x = 0; x < this.screenWidth; x += gridSize) {
+
+            // Створимо штучний початковий шлях, наприклад, починаючи з (x, y)
+            // Генеруємо "рандомний" шлях, але щоб він починався з (x, y)
+            // Тут використовуємо приватний метод #generateRandomPath, передаючи {x,y} як початок
+            const path = this.#generateRandomPath({ x, y });
+
+            // Для спрощення - візьмемо точку на середині шляху (progress = 0.5)
+            const midPoint = this.#getPointOnPath(path, 0.5);
+
+            // Додамо об'єкт з координатами та точкою на шляху
+            pathField.push({
+                startX: x,
+                startY: y,
+                midPointX: midPoint.x,
+                midPointY: midPoint.y,
+                path: path // Якщо хочеш, можна повернути весь шлях
+            });
+        }
+    }
+
+    return pathField;
+}
 
     #generateRandomSpawnPosition() {
         const side = Math.floor(Math.random() * 4);
