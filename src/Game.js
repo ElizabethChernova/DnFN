@@ -65,7 +65,7 @@ export class Game {
         if (this.isPaused) return;
 
         this.#motionStrategy.advanceStates(this.#flyingObjects, deltaTime);
-
+//this.#motionStrategy.flyingObjects = this.#flyingObjects;
         // Remove objects that moved outside the screen
         const offset = 500; // how far objects must be outside the screen to be removed
         this.#flyingObjects = this.#flyingObjects.filter(entry =>
@@ -83,6 +83,7 @@ export class Game {
     }
 
     trySpawnFlyingObject() {
+
         const spawnProbability = this.calculateSpawnProbability();
 
         // Determine whether we should spawn by rolling a die

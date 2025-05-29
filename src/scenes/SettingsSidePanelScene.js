@@ -86,6 +86,9 @@ export class SettingsSidePanelScene extends Scene {
             case GameMode.PARTICLE_DYNAMICS:
                 this.#addParticleDynamicsSettingsTo(list);
                 break;
+            case GameMode.RIGID_BODY:
+                this.#addRigidBodySettingsTo(list);
+                break;
             default:
                 throw new Error(`Settings: Unknown game mode`);
         }
@@ -112,6 +115,17 @@ export class SettingsSidePanelScene extends Scene {
         speedSlider.value = this.#remapValue(this.#game.motionStrategy.speed, minSpeed, maxSpeed, 1, 100);
         speedSlider.onUpdate.connect((value) => this.#game.motionStrategy.speed = this.#remapValue(value, 1, 100, minSpeed, maxSpeed));
         container.addChild(speedSlider);
+
+        // --- Додаємо чекбокс для візуалізації траєкторії ---
+        container.addChild(this.#createLabel("Visualizations"));
+
+        let pathVisCheckbox = this.#createCheckbox("Show path visualization");
+        pathVisCheckbox.checked = this.#game.visualizer.displayPath;  // displayPath має бути у PathInterpolationVisualizer
+        pathVisCheckbox.onCheck.connect((checked) => {
+            this.#game.visualizer.displayPath = checked;
+        });
+        container.addChild(pathVisCheckbox);
+
     }
 
     #addParticleDynamicsSettingsTo(container) {
@@ -136,7 +150,20 @@ export class SettingsSidePanelScene extends Scene {
     }
 
     #addRigidBodySettingsTo(container) {
-        // TODO: add settings for rigid body mode here
+
+
+
+//        container.addChild(this.#createLabel("Visualizations"));
+//
+//        let forceFieldCheckbox = this.#createCheckbox("Force field");
+//        forceFieldCheckbox.checked = this.#game.visualizer.displayForceField;
+//        forceFieldCheckbox.onCheck.connect((checked) =>
+//        {
+//            this.#game.visualizer.displayForceField = checked;
+//        });
+//        container.addChild(forceFieldCheckbox);
+
+
     }
 
     #remapValue(value, min_value, max_value, new_min, new_max) {
