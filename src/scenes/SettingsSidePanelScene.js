@@ -133,6 +133,14 @@ export class SettingsSidePanelScene extends Scene {
             this.#game.visualizer.displayForceField = checked;
         });
         container.addChild(forceFieldCheckbox);
+
+        let trailCheckbox = this.#createCheckbox("Particle trail");
+        trailCheckbox.checked = this.#game.visualizer.displayParticleTrail;
+        trailCheckbox.onCheck.connect((checked) =>
+        {
+            this.#game.visualizer.displayParticleTrail = checked;
+        });
+        container.addChild(trailCheckbox);
     }
 
     #addRigidBodySettingsTo(container) {
