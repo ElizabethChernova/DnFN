@@ -23,7 +23,7 @@ export class GravitationalForce extends ForceSource {
         let distance = math.distance(gravityCenter, particlePosition);
         // Note: the distance term in the denominator is capped to avoid divisions by zero and extreme acceleration when
         // objects get close to the gravitational center
-        let magnitude = (this.strength * flyingObject.motionState.mass) / Math.max(distance * distance, 100 * 100);
+        let magnitude = (this.strength * flyingObject.motionState.mass) / Math.max(distance * distance, 200 * 200);
         let direction = math.subtract(gravityCenter, particlePosition);
         direction = math.divide(direction, math.norm(direction));
 
