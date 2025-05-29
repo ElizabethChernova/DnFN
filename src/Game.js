@@ -125,11 +125,11 @@ export class Game {
             }
             if (tooClose) continue;
 
-            this.#forceSources.push(new GravitationalForce(x, y, 4e5));
+            this.#forceSources.push(new GravitationalForce(x, y, 1.5e7));
             i++;
         }
 
-        this.#forceSources.push(new DragForce(0.006));
+        this.#forceSources.push(new DragForce(0.1));
     }
 
     resizeScreen(newScreenWidth, newScreenHeight) {
