@@ -134,7 +134,12 @@ export class SettingsSidePanelScene extends Scene {
         let select = this.#createSelect(["Euler", "RK4"]);
         select.onSelect.connect((_, text) =>
         {
-            console.log("Selected " + text);
+            if (text === "Euler") {
+                this.#game.motionStrategy.integrationMethod = "euler";
+            }
+            else if (text === "RK4") {
+                this.#game.motionStrategy.integrationMethod = "rk4";
+            }
         });
         container.addChild(select);
 
@@ -147,6 +152,14 @@ export class SettingsSidePanelScene extends Scene {
             this.#game.visualizer.displayForceField = checked;
         });
         container.addChild(forceFieldCheckbox);
+
+        let trailCheckbox = this.#createCheckbox("Particle trail");
+        trailCheckbox.checked = this.#game.visualizer.displayParticleTrail;
+        trailCheckbox.onCheck.connect((checked) =>
+        {
+            this.#game.visualizer.displayParticleTrail = checked;
+        });
+        container.addChild(trailCheckbox);
     }
 
     #addRigidBodySettingsTo(container) {

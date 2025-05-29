@@ -45,16 +45,16 @@ export class Game {
         switch (gameMode) {
             case GameMode.PATH_INTERPOLATION:
                 this.#motionStrategy = new PathInterpolationStrategy(screenWidth, screenHeight);
-                this.#visualizer = new PathInterpolationVisualizer(this.#motionStrategy);
+                this.#visualizer = new PathInterpolationVisualizer(this.#motionStrategy, this);
                 break;
             case GameMode.PARTICLE_DYNAMICS:
                 this.populateForceSources();
                 this.#motionStrategy = new ParticleDynamicsStrategy(screenWidth, screenHeight, this.#forceSources);
-                this.#visualizer = new ParticleDynamicsVisualizer(this.#motionStrategy);
+                this.#visualizer = new ParticleDynamicsVisualizer(this.#motionStrategy, this);
                 break;
             case GameMode.RIGID_BODY:
                 this.#motionStrategy = new RigidBodyStrategy(screenWidth, screenHeight);
-                this.#visualizer = new RigidBodyVisualizer(this.#motionStrategy);
+                this.#visualizer = new RigidBodyVisualizer(this.#motionStrategy, this);
                 break;
             default:
                 throw new Error(`Game mode "${gameMode}" is not yet implemented`);
@@ -126,11 +126,11 @@ export class Game {
             }
             if (tooClose) continue;
 
-            this.#forceSources.push(new GravitationalForce(x, y, 4e5));
+            this.#forceSources.push(new GravitationalForce(x, y, 1.5e7));
             i++;
         }
 
-        this.#forceSources.push(new DragForce(0.006));
+        this.#forceSources.push(new DragForce(0.1));
     }
 
     resizeScreen(newScreenWidth, newScreenHeight) {
