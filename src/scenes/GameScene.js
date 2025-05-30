@@ -114,7 +114,9 @@ export class GameScene extends Scene {
             console.log("Creating render texture for GameScene")
         }
 
-        renderer.render(stage, { renderTexture: this.#offscreenRenderTexture, clear: true });
+        this.#motionBlur.composeRendering(this.#timeElapsed, this, renderer, this.#offscreenRenderTexture, stage, width, height);
+
+        //renderer.render(stage, { renderTexture: this.#offscreenRenderTexture, clear: true });
         return this.#offscreenRenderTexture;
     }
 

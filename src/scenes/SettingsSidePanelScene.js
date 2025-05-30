@@ -78,6 +78,8 @@ export class SettingsSidePanelScene extends Scene {
 
         this.#game = this.sceneManager.getScene("game").game;
 
+        list.addChild(this.#createLabel("Motion Blur"));
+
         let motionBlurSelect = this.#createSelect(["None", "Temporal supersampling"]);
         motionBlurSelect.onSelect.connect((_, text) =>
         {

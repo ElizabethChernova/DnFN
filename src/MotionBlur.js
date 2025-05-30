@@ -75,8 +75,17 @@ class FlyingObjectStateList {
 
 export class MotionBlur {
     motionBlurInterval = 1000; // [ms]
+    temporalSupersamplingNumFrames = 5;
 
     #recordedStates = {}; // map: number (UUID) -> FlyingObjectStateList
+
+    #frameTextures = []
+
+    constructor() {
+        for (let i = 0; i < this.temporalSupersamplingNumFrames; i++) {
+            this.#frameTextures.push(PIXI.RenderTexture.create({ width: screen.width, height: screen.height }));
+        }
+    }
 
     recordState(time, gameScene) {
         for (const uuid of Object.keys(gameScene.flyingObjectSprites)) {
@@ -98,7 +107,37 @@ export class MotionBlur {
         }
     }
 
-    composeRendering(time, gameScene) {
+    composeRendering(time, gameScene, renderer, renderTexture, stage, width, height) {
+        const step = this.motionBlurInterval / (this.temporalSupersamplingNumFrames - 1);
 
+        for (let i = 0; i < this.temporalSupersamplingNumFrames; i++) {
+            const frameTime = time - this.motionBlurInterval + i * step;
+
+            // Set objects' state
+            for (const uuid of Object.keys(gameScene.flyingObjectSprites)) {
+                const state = this.#recordedStates[uuid].getInterpolatedState(frameTime);
+                if (state == null) continue; // skip objects where no state exists yet
+                gameScene.flyingObjectSprites[uuid].x = state.x;
+                gameScene.flyingObjectSprites[uuid].y = state.y;
+            }
+
+            renderer.render(stage, { renderTexture: this.#frameTextures[i], clear: true });
+        }
+
+        this.#blendRenderTextures(this.#frameTextures, renderTexture, renderer);
+    }
+
+    #blendRenderTextures(samples, outputTexture, renderer) {
+        const n = samples.length;
+
+        for (let i = 0; i < n; i++) {
+            const sprite = new PIXI.Sprite(samples[i]);
+            sprite.alpha = 1 / n;
+
+            renderer.render(sprite, {
+                renderTexture: outputTexture,
+                clear: i === 0  // clear before first sample!
+            });
+        }
     }
 }
