@@ -39,8 +39,23 @@ export class SceneManager {
         }
         this.#animationCalculationDuration = performance.now() - animationCalculationStartTime;
 
-        // Render frame
-        this.#app.renderer.render(this.#app.stage);
+        if (this.#currentScene && this.#currentScene.constructor.name === "GameScene" && this.#currentScene.displayMotionBlur) {
+            // *Super* hacky solution to perform rendering in GameScene for motion blur
+            let frame = this.#currentScene.renderFrame(this.#app.renderer, this.#app.stage, screen.width, screen.height);
+            const frameSprite = new PIXI.Sprite(frame);
+
+            const index = this.#app.stage.getChildIndex(this.#currentScene);
+            this.#app.stage.removeChild(this.#currentScene);
+            this.#app.stage.addChildAt(frameSprite, index);
+
+            this.#app.renderer.render(this.#app.stage);
+
+            this.#app.stage.removeChild(frameSprite);
+            this.#app.stage.addChildAt(this.#currentScene, index);
+        } else {
+            // Render frame
+            this.#app.renderer.render(this.#app.stage);
+        }
     }
 
     registerScene(name, scene) {

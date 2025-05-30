@@ -78,6 +78,18 @@ export class SettingsSidePanelScene extends Scene {
 
         this.#game = this.sceneManager.getScene("game").game;
 
+        let motionBlurSelect = this.#createSelect(["None", "Temporal supersampling"]);
+        motionBlurSelect.onSelect.connect((_, text) =>
+        {
+            if (text === "None") {
+                this.sceneManager.getScene("game").displayMotionBlur = false;
+            }
+            else if (text === "Temporal supersampling") {
+                this.sceneManager.getScene("game").displayMotionBlur = true;
+            }
+        });
+        list.addChild(motionBlurSelect);
+
 
         switch (this.#game.gameMode) {
             case GameMode.PATH_INTERPOLATION:

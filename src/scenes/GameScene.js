@@ -1,13 +1,19 @@
 import { Scene } from "./Scene.js";
 import { Game, GameMode } from "../Game.js";
+import { MotionBlur } from "../MotionBlur.js";
 
 export class GameScene extends Scene {
     #game = null;
+    #timeElapsed = 0;
     #backgroundSprite;
     #scoreText;
     #visualizationContainer;
     #flyingObjectSprites = {};
     #forceSourceSprites = [];
+
+    displayMotionBlur = false;
+    #motionBlur = new MotionBlur();
+    #offscreenRenderTexture = null;
 
     constructor(sceneManager) {
         super(sceneManager);
@@ -53,8 +59,10 @@ export class GameScene extends Scene {
     }
 
     animationUpdate(deltaTime) {
+        this.#timeElapsed += deltaTime;
         this.#game.animationUpdate(deltaTime);
         this.#updateFlyingObjectSprites();
+        this.#motionBlur.recordState(this.#timeElapsed, this);
         this.#scoreText.text = "Score: " + this.#game.score;
         this.#visualizationContainer.removeChildren();
         this.#game.visualizer.drawTo(this.#visualizationContainer);
@@ -99,8 +107,23 @@ export class GameScene extends Scene {
         this.#game.shoot(x, y);
     }
 
+    renderFrame(renderer, stage, width, height) {
+        if (this.#offscreenRenderTexture == null ||
+            this.#offscreenRenderTexture.width !== width || this.#offscreenRenderTexture.height !== height) {
+            this.#offscreenRenderTexture = PIXI.RenderTexture.create({ width, height });
+            console.log("Creating render texture for GameScene")
+        }
+
+        renderer.render(stage, { renderTexture: this.#offscreenRenderTexture, clear: true });
+        return this.#offscreenRenderTexture;
+    }
+
     get game() {
         return this.#game;
+    }
+
+    get flyingObjectSprites() {
+        return this.#flyingObjectSprites;
     }
 
     #setupBackground() {
