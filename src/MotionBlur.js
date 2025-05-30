@@ -8,7 +8,6 @@ class FlyingObjectStateList {
 
     addState(time, x, y, rotation, scale) {
         this.#states.push({time, x, y, rotation, scale});
-        //console.log(`State recorded for ${this.flyingObjectUuid} at ${time}. Now we have ${this.#states.length} states.`);
     };
 
     removeStatesOlderThan(time) {
@@ -74,7 +73,7 @@ class FlyingObjectStateList {
 }
 
 export class MotionBlur {
-    motionBlurInterval = 1000; // [ms]
+    motionBlurInterval = 100; // [ms]
     temporalSupersamplingNumFrames = 5;
 
     #recordedStates = {}; // map: number (UUID) -> FlyingObjectStateList
@@ -130,14 +129,16 @@ export class MotionBlur {
     #blendRenderTextures(samples, outputTexture, renderer) {
         const n = samples.length;
 
+        let container = new PIXI.Container();
         for (let i = 0; i < n; i++) {
             const sprite = new PIXI.Sprite(samples[i]);
             sprite.alpha = 1 / n;
-
-            renderer.render(sprite, {
-                renderTexture: outputTexture,
-                clear: i === 0  // clear before first sample!
-            });
+            container.addChild(sprite);
         }
+
+        renderer.render(container, {
+            renderTexture: outputTexture,
+            clear: true
+        });
     }
 }
